@@ -170,12 +170,12 @@ turtle[1].y = 60;
 void drawCars(){
 	// level 1: cars
 			drawImage(car1Ptr, 100, 60, car[1].x, car[1].y);
-			car[1].x = car[1].x - 10;
+			car[1].x = car[1].x - 3;
 			if (car[1].x<0) {
 				car[1].x = 1180;
 			}
 			drawImage(car2Ptr, 100, 60, car[2].x, car[2].y);
-			car[2].x = car[2].x + 5;
+			car[2].x = car[2].x + 2;
 			if (car[2].x+100>1280) {
 				car[2].x = 0;
 			}
@@ -186,17 +186,17 @@ void drawCars(){
 			// }
 			drawImage(car3Ptr, 100, 60, car[3].x, car[3].y);
 			//drawImage(car3Ptr, 100, 60, car[3].x-200, car[3].y);
-			car[3].x = car[3].x - 15;
+			car[3].x = car[3].x - 5;
 			if(car[3].x<0){
 				car[3].x = 1180;
 			}
 			drawImage(car4Ptr, 180, 60, car[4].x, car[4].y);
-			car[4].x = car[4].x - 10;
+			car[4].x = car[4].x - 2;
 			if(car[4].x<0){
 				car[4].x = 1100;
 			} 
 			drawImage(car1Ptr, 100,60, car[5].x, car[5].y);
-			car[5].x = car[5].x - 20;
+			car[5].x = car[5].x - 4;
 			if(car[5].x<0){
 				car[5].x = 1180;
 			} 
@@ -259,20 +259,24 @@ void drawLevelFrog(int l){
 		drawImage(level1_2Ptr, 1280, 720, 0, 0);
 		drawImage(frogPtr, 60, 60, xfrog, yfrog);
 	}
+	else{
+		drawImage(level3_4Ptr, 1280, 720, 0, 0);
+		drawImage(frogPtr, 60, 60, xfrog, yfrog);
+	}
 }
 
-/* Draw a pixel */
-void drawPixel(Pixel *pixel){
-	long int location =(pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
-                       (pixel->y+framebufferstruct.yOff) * framebufferstruct.lineLength;
-	 *((unsigned short int*)(framebufferstruct.fptr + location)) = pixel->color;
-	 //printf("%d",pixel -> color);
+// /* Draw a pixel */
+// void drawPixel(Pixel *pixel){
+// 	long int location =(pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
+//                        (pixel->y+framebufferstruct.yOff) * framebufferstruct.lineLength;
+// 	 *((unsigned short int*)(framebufferstruct.fptr + location)) = pixel->color;
+// 	 //printf("%d",pixel -> color);
 
-	// long int location =(pixel->x+framebufferstruct.xOff)* (framebufferstruct.bits/8) +
-    //                    (pixel->y+framebufferstruct.yOff)  * framebufferstruct.lineLength;
-	//  *((unsigned short int*)stage + location) = pixel->color;
+// 	// long int location =(pixel->x+framebufferstruct.xOff)* (framebufferstruct.bits/8) +
+//     //                    (pixel->y+framebufferstruct.yOff)  * framebufferstruct.lineLength;
+// 	//  *((unsigned short int*)stage + location) = pixel->color;
 	
-}
+// }
 
 
 
@@ -406,7 +410,9 @@ void InterpretButtons(int i){
 		if (yfrog-60 >= 0) { // edge protection, make sure frog doesnt go outside screen
 			yfrog -= 60;
 			drawLevelFrog(1);
-			
+			drawCars();
+			drawLevel2Ob();
+			drawCanvas();
 			moves--;
 
 		} else {
@@ -420,6 +426,9 @@ void InterpretButtons(int i){
 		if (yfrog+60 < 720) {
 			yfrog += 60;
 			drawLevelFrog(1);
+			drawCars();
+			drawLevel2Ob();
+			drawCanvas();
 			moves--;
 		}
                 break;
@@ -428,7 +437,9 @@ void InterpretButtons(int i){
 		if (xfrog-60 >= 0) {
 			xfrog -= 60;
 			drawLevelFrog(1);
-			
+			drawCars();
+			drawLevel2Ob();
+			drawCanvas();
 			moves--;
 		}
                 break;
@@ -437,7 +448,9 @@ void InterpretButtons(int i){
 		if (xfrog+60 < 1260) {
 			xfrog += 60;
 			drawLevelFrog(1);
-			
+			drawCars();
+			drawLevel2Ob();
+			drawCanvas();
 			moves--;
 		}
                 break;
