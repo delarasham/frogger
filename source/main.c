@@ -138,6 +138,19 @@ struct Turtle{
 	int x;
 	int y;
 }turtle[2];
+struct Rock{
+	int x;
+	int y;
+} rocks[10];
+struct Cow{
+	int x;
+	int y;
+} cow[4];
+struct pig{
+	int x;
+	int y;
+} pig[4];
+
 void initOb(){
 car[1].x = 1180;
 car[1].y = 600;
@@ -166,7 +179,34 @@ lilypads[4].y = 120;
 turtle[1].x = 980;
 turtle[1].y = 60;
 
+rock[1].x = 0;
+rock[2].x = 200;
+rock[1].y = rocks[2].y = 600;
+rock[3].x = 1100;
+rock[4].x = 700;
+rock[3].y = rocks[4].y = 540;
+rock[5].x = 0;
+rock[5].y = 480;
+rock[6].x = 1160
+rock[7].x = 600;
+rock[6].y = rocks[7].y = 420;
+rock[8].x = 0;
+rock[9].x = 200;
+rock[8].y = rocks[9].y = 360;
+
+cow[1].x = 0;
+cow[2].x = 200
+cow[1].y = cow[2].y = 240;
+cow[3].x = 0;
+cow[3].y = 120;
+pig[1].x = 1220;
+pig[1].y = 180;
+pig[2].x = 1220;
+pig[3].x = 720;
+pig[2].y = pig[3].y = 60;
+
 }
+
 void drawCars(){
 	// level 1: cars
 			drawImage(car1Ptr, 100, 60, car[1].x, car[1].y);
@@ -254,6 +294,60 @@ void drawLevel2Ob(){ // test
 			} 
 
 }
+
+// draw level 3/4 stuff here
+void drawLevel34Ob() {
+	drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
+	rock[1].x += 5;
+	if (rock[1].x+120>1280) {
+		rock[1].x = 0;
+	}
+	drawImage(rock1Ptr, 120, 60, rock[2].x, rock[2].y);
+	rock[2].x += 5;
+	if (rock[2].x+120>1280) {
+		rock[2].x = 0;
+	}
+	drawImage(rock2Ptr, 180, 60, rock[3].x, rock[3].y);
+	rock[3].x -= 5;
+	if (rock[3].x<0) {
+		rock[3].x = 1100;
+	}
+	drawImage(rock2Ptr, 180, 60, rock[4].x, rock[4]].y);
+	rock[4].x -= 5;
+	if (rock[4].x<0) {
+		rock[4].x = 1100;
+	}
+	drawImage(rock1Ptr, 120, 60, rock[5].x, rock[5]].y);
+	rock[5].x += 5;
+	if (rock[5].x+120>1280) {
+		rock[5].x = 0;
+	}
+	drawImage(rock1Ptr, 120, 60, rock[6].x, rock[6].y);
+	rock[6].x -= 5;
+	if (rock[6].x<0) {
+		rock[6].x = 1160;
+	}
+	drawImage(rock1Ptr, 120, 60, rock[7].x, rock[7].y);
+	rock[7].x -= 5;
+	if (rock[7].x<0) {
+		rock[7].x = 1160;
+	}
+	drawImage(rock2Ptr, 180, 60, rock[8].x, rock[8].y);
+	rock[8].x += 5;
+	if (rock[8].x+180>1280) {
+		rock[8].x = 0;
+	}
+	drawImage(rock2Ptr, 180, 60, rock[9].x, rock[9].y);
+	rock[9].x += 5;
+	if (rock[9].x+180>1280) {
+		rock[9].x = 0;
+	}
+
+	drawImage(frogPtr, 60, 60, xfrog, yfrog);
+}
+
+
+
 void drawLevelFrog(int l){
 	if (l ==1){
 		drawImage(level1_2Ptr, 1280, 720, 0, 0);
