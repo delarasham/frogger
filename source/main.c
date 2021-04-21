@@ -201,7 +201,7 @@ void drawCars(){
 				car[5].x = 1180;
 			} 
 }
-void drawLevel2Ob(){
+void drawLevel2Ob(){ // test
 	drawImage(lilypadPtr, 80, 60, lilypads[1].x, lilypads[1].y); // drawing 3 lilypadss in lane 1
 			lilypads[1].x += 10; 
 			if (lilypads[1].x+80>1280) {
