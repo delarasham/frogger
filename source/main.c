@@ -26,6 +26,7 @@
 #include "graphics/rock2 60x180.h"
 #include "graphics/turtles 60x300.h"
 #include "graphics/valuepack60x60.h"
+#include "graphics/stats 300x60.h"
 
 /* SNES reader definitions*/
 
@@ -78,6 +79,7 @@ short int *rock1Ptr = (short int *)rock1.pixel_data;
 short int *rock2Ptr = (short int *)rock2.pixel_data;
 short int *turtlesPtr = (short int *)turtles.pixel_data;
 short int *valuepackPtr = (short int *)valuepack.pixel_data;
+short int *statsPtr = (short int *)stats.pixel_data;
 
 short int stage[1280 + 1][720 + 1];
 /* Draw an image */
@@ -400,6 +402,8 @@ if(pigs[1].x < 0) {
     drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
 
+
+
 void drawLevel(int l)
 {
 	if (l == 1)
@@ -555,19 +559,17 @@ int Menu_Read_SNES()
 
 					// UP
 					case 5:
-						//drawImage(titlePtr, 1280, 720, 0, 0);
+						drawImage(titlePtr, 1280, 720, 0, 0);
 						drawImage(frogPtr, 60, 60, 300, 450);
 						drawCanvas();
-						printf("You have pressed Joy-pad UP\n");
 						cursor = 0;
 						break;
 
 					// DOWN
 					case 6:
-						//drawImage(titlePtr, 1280, 720, 0, 0);
+						drawImage(titlePtr, 1280, 720, 0, 0);
 						drawImage(frogPtr, 60, 60, 300, 530);
 						drawCanvas();
-						printf("You have pressed Joy-pad DOWN\n");
 						cursor = 1;
 						break;
 
@@ -745,12 +747,14 @@ int Game_Read_SNES()
 			{
 				drawLevel(1);
 				drawLevel1Ob();
+				drawImage(statsPtr, 300, 60, 0, 0); // some flickering if i put it here
 				drawCanvas();
 			}
 			else
 			{
 				drawLevel(2);
 				drawLevel2Ob();
+				drawImage(statsPtr, 300, 60, 0, 0);
 				drawCanvas();
 			}
 			// doing collision detection
