@@ -150,35 +150,75 @@ struct Turtle
 	int x;
 	int y;
 } turtle[2];
-void initOb()
-{
-	car[1].x = 1180;
-	car[1].y = 600;
-	car[2].x = 0;
-	//int secondCar2x = 500;
-	car[2].y = 540;
-	car[3].x = 1180;
-	car[3].y = 480;
-	car[4].x = 1100;
-	car[4].y = 420;
-	car[5].x = 1180;
-	car[5].y = 360;
+struct Rock{
+    int x;
+    int y;
+} rock[10];
+struct Cow{
+    int x;
+    int y;
+} cows[4];
+struct pig{
+    int x;
+    int y;
+} pigs[4];
 
-	lilypads[1].x = 0;
-	lilypads[2].x = 200;
-	lilypads[3].x = 400;
-	lilypads[1].y = 240;
-	logs[1].x = 0;
-	logs[2].x = 350;
-	logs[3].x = 650;
-	logs[1].y = 180;
-	lilypads[4].x = 1200;
-	lilypads[5].x = 600;
-	lilypads[6].x = 200;
-	lilypads[4].y = 120;
-	turtle[1].x = 980;
-	turtle[1].y = 60;
+void initOb(){
+car[1].x = 1180;
+car[1].y = 600;
+ car[2].x = 0;
+    //int secondCar2x = 500;
+car[2].y = 540;
+car[3].x = 1180;
+ car[3].y = 480;
+ car[4].x = 1100;
+ car[4].y = 420;
+car[5].x = 1180;
+ car[5].y = 360;
+
+ lilypads[1].x = 0;
+lilypads[2].x = 200;
+ lilypads[3].x = 400;
+ lilypads[1].y = 240;
+ logs[1].x = 0;
+     logs[2].x = 350;
+     logs[3].x = 650;
+ logs[1].y = 180;
+     lilypads[4].x = 1200;
+ lilypads[5].x = 600;
+ lilypads[6].x = 200;
+lilypads[4].y = 120;
+turtle[1].x = 980;
+turtle[1].y = 60;
+
+rock[1].x = 0;
+rock[2].x = 200;
+rock[1].y = rock[2].y = 600;
+rock[3].x = 1100;
+rock[4].x = 700;
+rock[3].y = rock[4].y = 540;
+rock[5].x = 0;
+rock[5].y = 480;
+rock[6].x = 1160;
+rock[7].x = 600;
+rock[6].y = rock[7].y = 420;
+rock[8].x = 0;
+rock[9].x = 200;
+rock[8].y = rock[9].y = 360;
+
+cows[1].x = 0;
+cows[2].x = 200;
+cows[1].y = cows[2].y = 240;
+cows[3].x = 0;
+cows[3].y = 120;
+pigs[1].x = 1220;
+pigs[1].y = 180;
+pigs[2].x = 1220;
+pigs[3].x = 720;
+pigs[2].y = pigs[3].y = 60;
+
 }
+
 void drawLevel1Ob()
 {
 	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y);
@@ -279,6 +319,56 @@ void drawLevel1Ob()
 	}
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
+void drawLevel2Ob() {
+    drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
+    rock[1].x += 5;
+    if (rock[1].x+120>1280) {
+        rock[1].x = 0;
+    }
+    drawImage(rock1Ptr, 120, 60, rock[2].x, rock[2].y);
+    rock[2].x += 5;
+    if (rock[2].x+120>1280) {
+        rock[2].x = 0;
+    }
+    drawImage(rock2Ptr, 180, 60, rock[3].x, rock[3].y);
+    rock[3].x -= 5;
+    if (rock[3].x<0) {
+        rock[3].x = 1100;
+    }
+    drawImage(rock2Ptr, 180, 60, rock[4].x, rock[4].y);
+    rock[4].x -= 5;
+    if (rock[4].x<0) {
+        rock[4].x = 1100;
+    }
+    drawImage(rock1Ptr, 120, 60, rock[5].x, rock[5].y);
+    rock[5].x += 5;
+    if (rock[5].x+120>1280) {
+        rock[5].x = 0;
+    }
+    drawImage(rock1Ptr, 120, 60, rock[6].x, rock[6].y);
+    rock[6].x -= 5;
+    if (rock[6].x<0) {
+        rock[6].x = 1160;
+    }
+    drawImage(rock1Ptr, 120, 60, rock[7].x, rock[7].y);
+    rock[7].x -= 5;
+    if (rock[7].x<0) {
+        rock[7].x = 1160;
+    }
+    drawImage(rock2Ptr, 180, 60, rock[8].x, rock[8].y);
+    rock[8].x += 5;
+    if (rock[8].x+180>1280) {
+        rock[8].x = 0;
+    }
+    drawImage(rock2Ptr, 180, 60, rock[9].x, rock[9].y);
+    rock[9].x += 5;
+    if (rock[9].x+180>1280) {
+        rock[9].x = 0;
+    }
+
+    drawImage(frogPtr, 60, 60, xfrog, yfrog);
+}
+
 void drawLevel(int l)
 {
 	if (l == 1)
@@ -492,7 +582,7 @@ void InterpretButtons(int i)
 				yfrog -= 60;
 				drawLevel(2);
 				drawImage(frogPtr, 60, 60, xfrog, yfrog);
-				//drawLevel1Ob();
+				drawLevel2Ob();
 				drawCanvas();
 				moves--;
 			}
@@ -525,7 +615,7 @@ void InterpretButtons(int i)
 				yfrog += 60;
 				drawLevel(2);
 				drawImage(frogPtr, 60, 60, xfrog, yfrog);
-				//drawLevel2Ob();
+				drawLevel2Ob();
 				drawCanvas();
 				moves--;
 			}
@@ -557,8 +647,8 @@ void InterpretButtons(int i)
 			{
 				xfrog -= 60;
 				drawLevel(2);
-				drawImage(frogPtr, 60, 60, xfrog, yfrog);
-				//drawLevel1Ob();
+				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				drawLevel2Ob();
 				drawCanvas();
 				moves--;
 			}
@@ -581,7 +671,7 @@ void InterpretButtons(int i)
 				xfrog += 60;
 				drawLevel(2);
 				drawImage(frogPtr, 60, 60, xfrog, yfrog);
-				//drawLevel1Ob();
+				drawLevel2Ob();
 				drawCanvas();
 				moves--;
 			}
@@ -629,7 +719,7 @@ int Game_Read_SNES()
 			else
 			{
 				drawLevel(2);
-				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				drawLevel2Ob();
 				drawCanvas();
 			}
 			// doing collision detection
