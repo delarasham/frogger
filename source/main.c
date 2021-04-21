@@ -34,7 +34,7 @@ static unsigned int *gpio;
 #define INP_GPIO(g) *(gpio + ((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g) *(gpio + ((g)/10)) |= (1<<(((g)%10)*3))
 
-//defining constants
+//defining the constants
 #define CLK 11
 #define LAT 9
 #define DAT 10
