@@ -75,6 +75,7 @@ short int *rock2Ptr = (short int *) rock2.pixel_data;
 short int *turtlesPtr = (short int *) turtles.pixel_data;
 short int *valuepackPtr = (short int *) valuepack.pixel_data;
 
+
 short int stage[1280+1][720+1];
 /* Draw an image */
 void drawCanvas(){
@@ -118,6 +119,145 @@ void drawImage(short int * imagePtr, int width, int length, int xstart, int ysta
 	// printf("%d\n",  *((unsigned short int*)(framebufferstruct.fptr + location)));
 	// printf("%d",  *((unsigned short int*)(framebufferstruct.fptr + location+4)));
 	// munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
+}
+
+struct Car{
+	int x;
+	int y;
+}car[6];
+struct Lilypad{
+	int x;
+	int y;
+}lilypads[7];
+struct Log{
+	int x;
+	int y;
+}logs[4];
+struct Turtle{
+	int x;
+	int y;
+}turtle[2];
+void initOb(){
+car[1].x = 1180;
+car[1].y = 600;
+ car[2].x = 0;
+	//int secondCar2x = 500;
+car[2].y = 540;
+car[3].x = 1180;
+ car[3].y = 480;
+ car[4].x = 1100;
+ car[4].y = 420;
+car[5].x = 1180;
+ car[5].y = 360;
+
+ lilypads[1].x = 0;
+lilypads[2].x = 200;
+ lilypads[3].x = 400;
+ lilypads[1].y = 240;
+ logs[1].x = 0;
+	 logs[2].x = 350;
+	 logs[3].x = 650;
+ logs[1].y = 180;
+	 lilypads[4].x = 1200;
+ lilypads[5].x = 600;
+ lilypads[6].x = 200;
+lilypads[4].y = 120;
+turtle[1].x = 980;
+turtle[1].y = 60;
+
+}
+void drawCars(){
+	// level 1: cars
+			drawImage(car1Ptr, 100, 60, car[1].x, car[1].y);
+			car[1].x = car[1].x - 10;
+			if (car[1].x<0) {
+				car[1].x = 1180;
+			}
+			drawImage(car2Ptr, 100, 60, car[2].x, car[2].y);
+			car[2].x = car[2].x + 5;
+			if (car[2].x+100>1280) {
+				car[2].x = 0;
+			}
+			// drawImage(car2Ptr, 100, 60, secondCar2x, car[2].y); // drawing a second car in lane 2
+			// secondCar2x += 15;
+			// if (secondCar2x+100>1280) {
+			// 	secondCar2x = 0;
+			// }
+			drawImage(car3Ptr, 100, 60, car[3].x, car[3].y);
+			//drawImage(car3Ptr, 100, 60, car[3].x-200, car[3].y);
+			car[3].x = car[3].x - 15;
+			if(car[3].x<0){
+				car[3].x = 1180;
+			}
+			drawImage(car4Ptr, 180, 60, car[4].x, car[4].y);
+			car[4].x = car[4].x - 10;
+			if(car[4].x<0){
+				car[4].x = 1100;
+			} 
+			drawImage(car1Ptr, 100,60, car[5].x, car[5].y);
+			car[5].x = car[5].x - 20;
+			if(car[5].x<0){
+				car[5].x = 1180;
+			} 
+}
+void drawLevel2Ob(){
+	drawImage(lilypadPtr, 80, 60, lilypads[1].x, lilypads[1].y); // drawing 3 lilypadss in lane 1
+			lilypads[1].x += 10; 
+			if (lilypads[1].x+80>1280) {
+				lilypads[1].x = 0;
+			}
+			drawImage(lilypadPtr, 80, 60, lilypads[2].x, lilypads[1].y);
+			lilypads[2].x += 10;
+			if (lilypads[2].x+80>1280) {
+				lilypads[2].x = 0;
+			}
+			drawImage(lilypadPtr, 80, 60, lilypads[3].x, lilypads[1].y);
+			lilypads[3].x += 10;
+			if (lilypads[3].x+80>1280) {
+				lilypads[3].x = 0;
+			}
+			drawImage(lilypadPtr, 80, 60, lilypads[4].x, lilypads[4].y); // drawing 3 lilypads in lane 3
+			lilypads[4].x -= 6;
+			if (lilypads[4].x<0){
+				lilypads[4].x = 1200;
+			} 
+			drawImage(lilypadPtr, 80, 60, lilypads[5].x, lilypads[4].y);
+			lilypads[5].x -= 6;
+			if (lilypads[5].x<0) {
+				lilypads[5].x = 1200;
+			}
+			drawImage(lilypadPtr, 80, 60, lilypads[6].x, lilypads[4].y);
+			lilypads[6].x -= 6;
+			if (lilypads[6].x<0) {
+				lilypads[6].x = 1200;
+			}
+			drawImage(logPtr, 240, 60, logs[1].x, logs[1].y);	// drawing 3 logs as well
+			logs[1].x += 8;
+			if (logs[1].x+240>1280){
+				logs[1].x = 0;
+			} 
+			drawImage(logPtr, 240, 60, logs[2].x, logs[1].y);	// drawing 3 logs as well
+			logs[2].x += 8;
+			if (logs[2].x+240>1280){
+				logs[2].x = 0;
+			} 
+			drawImage(logPtr, 240, 60, logs[3].x, logs[1].y);	// drawing 3 logs as well
+			logs[3].x += 8;
+			if (logs[3].x+240>1280){
+				logs[3].x = 0;
+			} 
+			drawImage(turtlesPtr, 300, 60,turtle[1].x,turtle[1].y);
+			turtle[1].x -= 12;
+			if (turtle[1].x<0){
+				turtle[1].x = 980;
+			} 
+
+}
+void drawLevelFrog(int l){
+	if (l ==1){
+		drawImage(level1_2Ptr, 1280, 720, 0, 0);
+		drawImage(frogPtr, 60, 60, xfrog, yfrog);
+	}
 }
 
 /* Draw a pixel */
@@ -263,9 +403,9 @@ void InterpretButtons(int i){
 		case 5:
 		printf("You have pressed Joy-pad UP\n"); // go 60 px up
 		if (yfrog-60 >= 0) { // edge protection, make sure frog doesnt go outside screen
-			drawImage(level1_2Ptr, 1280, 720, 0, 0);
-			drawImage(frogPtr, 60, 60, xfrog, yfrog-60);
 			yfrog -= 60;
+			drawLevelFrog(1);
+			
 			moves--;
 
 		} else {
@@ -277,27 +417,26 @@ void InterpretButtons(int i){
 		case 6:
 		printf("You have pressed Joy-pad DOWN\n"); // 60 px down
 		if (yfrog+60 < 720) {
-			drawImage(level1_2Ptr, 1280, 720, 0, 0);
-			drawImage(frogPtr, 60, 60, xfrog, yfrog+60);
 			yfrog += 60;
+			drawLevelFrog(1);
 			moves--;
 		}
                 break;
 		case 7:
 		printf("You have pressed Joy-pad LEFT\n"); // 60 px left
 		if (xfrog-60 >= 0) {
-			drawImage(level1_2Ptr, 1280, 720, 0, 0);
-			drawImage(frogPtr, 60, 60, xfrog-60, yfrog);
 			xfrog -= 60;
+			drawLevelFrog(1);
+			
 			moves--;
 		}
                 break;
 		case 8:
 		printf("You have pressed Joy-pad RIGHT\n");
 		if (xfrog+60 < 1260) {
-			drawImage(level1_2Ptr, 1280, 720, 0, 0);
-			drawImage(frogPtr, 60, 60, xfrog+60, yfrog);
 			xfrog += 60;
+			drawLevelFrog(1);
+			
 			moves--;
 		}
                 break;
@@ -321,33 +460,7 @@ int Game_Read_SNES()
 	int pressed = 0;
 
 	// initial coordinate locations for all the obstacles in leve1_2
-	int car1x = 1180;
-	int car1y = 600;
-	int car2x = 0;
-	int secondCar2x = 500;
-	int car2y = 540;
-	int car3x = 1180;
-	int car3y = 480;
-	int car4x = 1100;
-	int car4y = 420;
-	int car5x = 1180;
-	int car5y = 360;
-
-	int lilypad1x = 0;
-	int secondlilypad1x = 200;
-	int thirdlilypad1x = 400;
-	int lilypad1y = 240;
-	int logx = 0;
-	int secondlogx = 350;
-	int thirdlogx = 650;
-	int logy = 180;
-	int lilypad2x = 1200;
-	int secondlilypad2x = 600;
-	int thirdlilypad2x = 200;
-	int lilypad2y = 120;
-	int turtlesx = 980;
-	int turtlesy = 60;
-
+	initOb();
 
 	buttons[4]=1;			// initialize START as unpressed
 	while(buttons[4]==1){	// while START is not pressed
@@ -359,97 +472,11 @@ int Game_Read_SNES()
 			Wait(12);
 			Write_Latch(0);
 			
-			drawImage(level1_2Ptr, 1280, 720, 0, 0);
-			
-			// drawing all the obstacles
-	
-			// level 1: cars
-			drawImage(car1Ptr, 100, 60, car1x, car1y);
-			car1x = car1x - 10;
-			if (car1x<0) {
-				car1x = 1180;
-			}
-			drawImage(car2Ptr, 100, 60, car2x, car2y);
-			car2x = car2x + 5;
-			if (car2x+100>1280) {
-				car2x = 0;
-			}
-			drawImage(car2Ptr, 100, 60, secondCar2x, car2y); // drawing a second car in lane 2
-			secondCar2x += 15;
-			if (secondCar2x+100>1280) {
-				secondCar2x = 0;
-			}
-			drawImage(car3Ptr, 100, 60, car3x, car3y);
-			//drawImage(car3Ptr, 100, 60, car3x-200, car3y);
-			car3x = car3x - 15;
-			if(car3x<0){
-				car3x = 1180;
-			}
-			drawImage(car4Ptr, 180, 60, car4x, car4y);
-			car4x = car4x - 10;
-			if(car4x<0){
-				car4x = 1100;
-			} 
-			drawImage(car1Ptr, 100,60, car5x, car5y);
-			car5x = car5x - 20;
-			if(car5x<0){
-				car5x = 1180;
-			} 
-
+			drawLevelFrog(1);
+			// drawing all cars
+			drawCars();
 			// level 2: lilypad, log, turtles
-
-			drawImage(lilypadPtr, 80, 60, lilypad1x, lilypad1y); // drawing 3 lilypads in lane 1
-			lilypad1x += 10; 
-			if (lilypad1x+80>1280) {
-				lilypad1x = 0;
-			}
-			drawImage(lilypadPtr, 80, 60, secondlilypad1x, lilypad1y);
-			secondlilypad1x += 10;
-			if (secondlilypad1x+80>1280) {
-				secondlilypad1x = 0;
-			}
-			drawImage(lilypadPtr, 80, 60, thirdlilypad1x, lilypad1y);
-			thirdlilypad1x += 10;
-			if (thirdlilypad1x+80>1280) {
-				thirdlilypad1x = 0;
-			}
-			drawImage(lilypadPtr, 80, 60, lilypad2x, lilypad2y); // drawing 3 lilypads in lane 3
-			lilypad2x -= 6;
-			if (lilypad2x<0){
-				lilypad2x = 1200;
-			} 
-			drawImage(lilypadPtr, 80, 60, secondlilypad2x, lilypad2y);
-			secondlilypad2x -= 6;
-			if (secondlilypad2x<0) {
-				secondlilypad2x = 1200;
-			}
-			drawImage(lilypadPtr, 80, 60, thirdlilypad2x, lilypad2y);
-			thirdlilypad2x -= 6;
-			if (thirdlilypad2x<0) {
-				thirdlilypad2x = 1200;
-			}
-			drawImage(logPtr, 240, 60, logx, logy);	// drawing 3 logs as well
-			logx += 8;
-			if (logx+240>1280){
-				logx = 0;
-			} 
-			drawImage(logPtr, 240, 60, secondlogx, logy);	// drawing 3 logs as well
-			secondlogx += 8;
-			if (secondlogx+240>1280){
-				secondlogx = 0;
-			} 
-			drawImage(logPtr, 240, 60, thirdlogx, logy);	// drawing 3 logs as well
-			thirdlogx += 8;
-			if (thirdlogx+240>1280){
-				thirdlogx = 0;
-			} 
-			drawImage(turtlesPtr, 300, 60, turtlesx, turtlesy);
-			turtlesx -= 12;
-			if (turtlesx<0){
-				turtlesx = 980;
-			} 
-
-			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			drawLevel2Ob();
 			drawCanvas();
 
 			// doing collision detection
@@ -457,12 +484,12 @@ int Game_Read_SNES()
 			// loop through 60 top 60 pixels of the frog (north border)
 			for (int i=0; i<60; i++) {
 				// checking collissions for all cars in level 1
-				if (car1x + 100 == xfrog+i && car1y == yfrog || car1x == xfrog+i && car1y == yfrog || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
-					car2x + 100 == xfrog+i && car2y == yfrog || car2x == xfrog+i && car2y == yfrog || // same thing with car2
-					secondCar2x + 100 == xfrog+i && car2y == yfrog || secondCar2x == xfrog+i && car2y == yfrog || // and so on...
-					car3x + 100 == xfrog+i && car3y == yfrog || car3x == xfrog+i && car3y == yfrog || 
-					car4x + 180 == xfrog+i && car4y == yfrog || car4x == xfrog+i && car4y == yfrog ||
-					car5x + 100 == xfrog+i && car5y == yfrog || car5x == xfrog+i && car5y == yfrog )
+				if (car[1].x + 100 == xfrog+i && car[1].y == yfrog || car[1].x == xfrog+i && car[1].y == yfrog || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
+					car[2].x + 100 == xfrog+i && car[2].y == yfrog || car[2].x == xfrog+i && car[2].y == yfrog || // same thing with car2
+					//secondCar2x + 100 == xfrog+i && car[2].y == yfrog || secondCar2x == xfrog+i && car[2].y == yfrog || // and so on...
+					car[3].x + 100 == xfrog+i && car[3].y == yfrog || car[3].x == xfrog+i && car[3].y == yfrog || 
+					car[4].x + 180 == xfrog+i && car[4].y == yfrog || car[4].x == xfrog+i && car[4].y == yfrog ||
+					car[5].x + 100 == xfrog+i && car[5].y == yfrog || car[5].x == xfrog+i && car[5].y == yfrog )
 				{
 					lives--;		
 					xfrog = 610;		
@@ -472,9 +499,9 @@ int Game_Read_SNES()
 				}
 				
 				// collision with lilyads in lane 1
-				if (lilypad1x + 40 == xfrog+i && lilypad1y == yfrog || // if frog north border hits top middle pixel of lilypad
-					secondlilypad1x + 40 == xfrog+i && lilypad1y == yfrog || 
-					thirdlilypad1x + 40 == xfrog+i && lilypad1y == yfrog) {
+				if (lilypads[1].x + 40 == xfrog+i && lilypads[1].y == yfrog || // if frog north border hits top middle pixel of lilypad
+					lilypads[2].x + 40 == xfrog+i && lilypads[1].y == yfrog || 
+					lilypads[3].x + 40 == xfrog+i && lilypads[1].y == yfrog) {
 					// move frog along with the lilypad
 					drawCanvas();
 					xfrog += 10;
@@ -482,9 +509,9 @@ int Game_Read_SNES()
 					
 				// collision with logs lane 2
 				// check if frog north border collides with any 1 of 4 pixels evenly spread out on the log
-				} else if (logx + 30 == xfrog+i && logy == yfrog || logx + 90 == xfrog+i && logy == yfrog || logx + 150 == xfrog+i && logy == yfrog || logx + 210 == xfrog+i && logy == yfrog || 
-						   secondlogx + 30 == xfrog+i && logy == yfrog || secondlogx + 90 == xfrog+i && logy == yfrog || secondlogx + 150 == xfrog+i && logy == yfrog || secondlogx + 210 == xfrog+i && logy == yfrog ||
-						   thirdlogx + 30 == xfrog+i && logy == yfrog || thirdlogx + 90 == xfrog+i && logy == yfrog || thirdlogx + 150 == xfrog+i && logy == yfrog || thirdlogx + 210 == xfrog+i && logy == yfrog)
+				} else if (logs[1].x + 30 == xfrog+i && logs[1].y == yfrog || logs[1].x + 90 == xfrog+i && logs[1].y == yfrog || logs[1].x + 150 == xfrog+i && logs[1].y == yfrog || logs[1].x + 210 == xfrog+i && logs[1].y == yfrog || 
+						   logs[2].x + 30 == xfrog+i && logs[1].y == yfrog || logs[2].x + 90 == xfrog+i && logs[1].y == yfrog || logs[2].x + 150 == xfrog+i && logs[1].y == yfrog || logs[2].x + 210 == xfrog+i && logs[1].y == yfrog ||
+						   logs[3].x + 30 == xfrog+i && logs[1].y == yfrog || logs[3].x + 90 == xfrog+i && logs[1].y == yfrog || logs[3].x + 150 == xfrog+i && logs[1].y == yfrog || logs[3].x + 210 == xfrog+i && logs[1].y == yfrog)
 				{
 					// move frog along with the lilypad
 					drawCanvas();
@@ -492,9 +519,9 @@ int Game_Read_SNES()
 					drawImage(frogPtr, 60, 60, xfrog, yfrog);
 
 				// collisions with lilypads in lane 3
-				} else if (lilypad2x + 40 == xfrog+i && lilypad2y == yfrog || // if frog north border hits top middle pixel of lilypad
-					secondlilypad2x + 40 == xfrog+i && lilypad2y == yfrog || 
-					thirdlilypad2x + 40 == xfrog+i && lilypad2y == yfrog)
+				} else if (lilypads[4].x + 40 == xfrog+i && lilypads[4].y == yfrog || // if frog north border hits top middle pixel of lilypad
+					lilypads[5].x + 40 == xfrog+i && lilypads[4].y == yfrog || 
+					lilypads[6].x + 40 == xfrog+i && lilypads[4].y == yfrog)
 					{
 					// move frog along with the lilypad
 					drawCanvas();
@@ -502,11 +529,11 @@ int Game_Read_SNES()
 					drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				
 				// collisions with turtles (any 1 of 5 pixels)
-				} else if (turtlesx + 30 == xfrog+i && turtlesy == yfrog ||
-						   turtlesx + 90 == xfrog+i && turtlesy == yfrog ||
-						   turtlesx + 150 == xfrog+i && turtlesy == yfrog ||
-						   turtlesx + 210 == xfrog+i && turtlesy == yfrog ||
-						   turtlesx + 270 == xfrog+i && turtlesy == yfrog ) 
+				} else if (turtle[1].x + 30 == xfrog+i &&turtle[1].y == yfrog ||
+						  turtle[1].x + 90 == xfrog+i &&turtle[1].y == yfrog ||
+						  turtle[1].x + 150 == xfrog+i &&turtle[1].y == yfrog ||
+						  turtle[1].x + 210 == xfrog+i &&turtle[1].y == yfrog ||
+						  turtle[1].x + 270 == xfrog+i &&turtle[1].y == yfrog ) 
 					{
 					// move frog along with the lilypad
 					drawCanvas();
@@ -527,10 +554,6 @@ int Game_Read_SNES()
 				*/
 			
 			}
-
-
-
-
 
 
 			for (int i=1;i<=16;i++) {		// loop through each button
@@ -604,16 +627,6 @@ int main() {
 
 	Game_Read_SNES();
 
-	/*
-	drawImage(car1Ptr, 100, 60, car1x, car1y);
-	// car animation test
-	while(1) {
-		drawImage(car1Ptr, 100, 60, car1x, car1y);
-		car1x = car1x - 10;
-		delayMicroseconds(30000);
-		drawImage(level1_2Ptr, 1280, 720, 0, 0);
-		}
-	*/
 
 	return 0;
 }
