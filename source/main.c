@@ -365,6 +365,37 @@ void drawLevel2Ob() {
     if (rock[9].x+180>1280) {
         rock[9].x = 0;
     }
+	
+drawImage(cowPtr, 100, 60, cows[1].x, cows[1].y);
+cows[1].x += 5;
+if(cows[1].x + 100 > 1280) {
+	cows[1].x = 0;
+}
+drawImage(cowPtr, 100, 60, cows[2].x, cows[2].y);
+cows[2].x += 5;
+if(cows[2].x + 100 > 1280) {
+	cows[2].x = 0;
+}
+drawImage(cowPtr, 100, 60, cows[3].x, cows[3].y);
+cows[3].x += 5;
+if(cows[3].x + 100 > 1280) {
+	cows[3].x = 0;
+}
+drawImage(pigPtr, 60, 60, pigs[1].x, pigs[1].y);
+pigs[1].x -= 5;
+if(pigs[1].x < 0) {
+	pigs[1].x = 1220;
+}
+drawImage(pigPtr, 60, 60, pigs[2].x, pigs[2].y);
+pigs[2].x -= 5;
+if(pigs[1].x < 0) {
+	pigs[1].x = 1220;
+}
+drawImage(pigPtr, 60, 60, pigs[3].x, pigs[3].y);
+pigs[3].x -= 5;
+if(pigs[1].x < 0) {
+	pigs[1].x = 1220;
+}
 
     drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
