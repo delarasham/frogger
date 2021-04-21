@@ -56,6 +56,7 @@ void drawPixel(Pixel *pixel);
 int xfrog, yfrog; //global variable for the frog's coordinates
 
 int moves, lives, timeLeft; // variable for the number of moves and lives
+bool level1 = true;
 
 // global pointers for each image to draw
 short int *titlePtr = (short int *) title.pixel_data;
@@ -428,47 +429,103 @@ void InterpretButtons(int i){
                 break;
 		case 5:
 		printf("You have pressed Joy-pad UP\n"); // go 60 px up
-		if (yfrog-60 >= 0) { // edge protection, make sure frog doesnt go outside screen
-			yfrog -= 60;
+		if (yfrog-60 >= 0 ) { // edge protection, make sure frog doesnt go outside screen
+			if(level1){
+				yfrog -= 60;
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 			moves--;
+			}
+			else{
+				yfrog -= 60;
+			drawLevel(2);
+			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			//drawLevel1Ob();
+			drawCanvas();
+			moves--;
+			}
 
-		} else {
+		} else if (level1){
 			// go to the next 2 levels, new background screen
-			drawImage(level3_4Ptr, 1280, 720, 0, 0); 
-			drawImage(frogPtr, 60, 60, 610, 660);
+			level1 = false;
+			drawLevel(2);
+			yfrog = 720-60;
+			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			drawCanvas();
+			moves--;
 		}
                 break;
 		case 6:
 		printf("You have pressed Joy-pad DOWN\n"); // 60 px down
-		if (yfrog+60 < 720) {
+		if (yfrog+60 < 720 && level1) {
 			yfrog += 60;
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 			moves--;
 		}
+		else if(!level1){
+			if(yfrog+60 < 720){
+				yfrog += 60;
+				drawLevel(2);
+				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				//drawLevel2Ob();
+				drawCanvas();
+				moves--;
+			}else{
+				level1 = true;
+				yfrog = 0;
+				yfrog += 60;
+				drawLevel(1);
+				drawLevel1Ob();
+				drawCanvas();
+				moves--;
+			}
+			
+			
+		}
                 break;
 		case 7:
 		printf("You have pressed Joy-pad LEFT\n"); // 60 px left
 		if (xfrog-60 >= 0) {
-			xfrog -= 60;
+			if(level1){
+				xfrog -= 60;
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 			moves--;
+			}
+			else{
+					xfrog -= 60;
+			drawLevel(2);
+			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			//drawLevel1Ob();
+			drawCanvas();
+			moves--;
+			}
+			
 		}
                 break;
 		case 8:
 		printf("You have pressed Joy-pad RIGHT\n");
-		if (xfrog+60 < 1260) {
-			xfrog += 60;
+		if (xfrog+60 < 1220) {
+			if(level1){
+				xfrog += 60;
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 			moves--;
+			}
+			else{
+					xfrog += 60;
+			drawLevel(2);
+			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			//drawLevel1Ob();
+			drawCanvas();
+			moves--;
+			}
+			
 		}
                 break;
 		case 9:
@@ -502,17 +559,24 @@ int Game_Read_SNES()
 			Write_Latch(1);
 			Wait(12);
 			Write_Latch(0);
-			
-			drawLevel(1);
+			if(level1){
+				drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 
+			}
+			else{
+				drawLevel(2);
+				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				drawCanvas();
+			}
 			// doing collision detection
 
 			// loop through 60 top 60 pixels of the frog (north border)
 			for (int i=0; i<60; i++) {
 				// checking collissions for all cars in level 1
-				if (carCollision(i))
+				if(level1){
+					if (carCollision(i))
 				{
 					lives--;		
 					xfrog = 610;		
@@ -573,6 +637,8 @@ int Game_Read_SNES()
 					drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				} 
 				*/
+				}
+				
 			
 			}
 
