@@ -1,3 +1,13 @@
+/*
+CPSC 359 WINTER 2021
+Project Part two: Frogger game on Rasperry Pi 4
+Authors: Delara Shamanian, Justin Yu
+
+A complete implementation of the famous frogger game in C to be played 
+with SNES controller on the Raspberry Pi, using concepts in video programming and threads.
+(see project part 2 specifications fro all details ont he project).
+*/
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -8,6 +18,7 @@
 #include "framebuffer.h"
 #include <stdbool.h>
 
+// including all graphics 
 #include "graphics/froggertitle.h"
 #include "graphics/blackscreen.h"
 #include "graphics/frog 60x60.h"
@@ -28,8 +39,7 @@
 #include "graphics/valuepack60x60.h"
 #include "graphics/stats 300x60.h"
 
-/* SNES reader definitions*/
-
+// SNES reader definitions
 static unsigned int *gpio;
 
 // set function of a pin p to input(INP_GPIO) or output(OUT_GPIO)
@@ -37,7 +47,6 @@ static unsigned int *gpio;
 #define OUT_GPIO(g) *(gpio + ((g) / 10)) |= (1 << (((g) % 10) * 3))
 
 //defining some constants
-
 #define CLK 11
 #define LAT 9
 #define DAT 10
@@ -45,7 +54,7 @@ static unsigned int *gpio;
 #define GPSET0 7
 #define GPCLR0 10
 
-/* Definitions */
+// Definition
 typedef struct
 {
 	short int color;
@@ -55,9 +64,11 @@ typedef struct
 struct fbs framebufferstruct;
 void drawPixel(Pixel *pixel);
 
-int xfrog, yfrog; //global variable for the frog's coordinates
+// global variable for the frog's coordinates
+int xfrog, yfrog; 
 
-int moves, lives, timeLeft; // variable for the number of moves and lives
+// variable for the number of moves and lives
+int moves, lives, timeLeft;
 bool level1 = true;
 
 // global pointers for each image to draw
@@ -82,14 +93,15 @@ short int *valuepackPtr = (short int *)valuepack.pixel_data;
 short int *statsPtr = (short int *)stats.pixel_data;
 
 short int stage[1280 + 1][720 + 1];
-/* Draw an image */
+
+// drawCanvas loads and displays to the framebuffer and entire instance or frame of the game.
 void drawCanvas()
 {
 	framebufferstruct = initFbInfo();
 	long int i = 0;
-	for (int x = 0; x < 1280; x++)
+	for (int x = 0; x < 1280; x++) 
 	{
-		for (int y = 0; y < 720; y++)
+		for (int y = 0; y < 720; y++)	// looping through all pixels in the screen
 		{
 			long int location = (x + framebufferstruct.xOff) * (framebufferstruct.bits / 8) +
 								(y + framebufferstruct.yOff) * framebufferstruct.lineLength;
@@ -98,11 +110,12 @@ void drawCanvas()
 	}
 	munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 }
+
+// drawImage draws a specific image defined by the imagePtr, with a specific width and length, at a specific location 
+// on the screen (xstart, ystart) is the location of the top left pixel of the image.
+// part of the code is taken from drawImage.c example on D2L
 void drawImage(short int *imagePtr, int width, int length, int xstart, int ystart)
 {
-	//framebufferstruct = initFbInfo();
-	// initialize + get FBS
-	//short int *ptr = imagePtr; 				//(short int *) title.pixel_data;
 
 	Pixel *pixel; // initialize a pixel
 	pixel = malloc(sizeof(Pixel));
@@ -132,6 +145,7 @@ void drawImage(short int *imagePtr, int width, int length, int xstart, int ystar
 	// munmap(framebufferstruct.fptr, framebufferstruct.screenSize);
 }
 
+// defining xy coordinate structures for all obstacles in the game
 struct Car
 {
 	int x;
@@ -165,7 +179,9 @@ struct pig{
     int y;
 } pigs[4];
 
-void initOb(){
+// initOOb initializes all the coordinates of the object to specific pixel locations on the screen.
+void initOb() {
+
 car[1].x = 1180;
 car[1].y = 600;
  car[2].x = 0;
@@ -221,14 +237,16 @@ pigs[2].y = pigs[3].y = 60;
 
 }
 
+// drawLevel1Ob uses drawImage and draws all the obstacles in level 1 (road with cars, water).
 void drawLevel1Ob()
 {
-	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y);
-	car[1].x = car[1].x - 3;
-	if (car[1].x < 0)
+	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y); // drawing car #1
+	car[1].x = car[1].x - 3; // animating the car, moves from right to left at a speed of 3.
+	if (car[1].x < 0) // checking edge case, when car reaches the end of screen
 	{
 		car[1].x = 1180;
 	}
+	// repeating with all other obstacles
 	drawImage(car2Ptr, 100, 60, car[2].x, car[2].y);
 	car[2].x = car[2].x + 2;
 	if (car[2].x + 100 > 1280)
@@ -301,28 +319,33 @@ void drawLevel1Ob()
 	{
 		logs[1].x = 0;
 	}
-	drawImage(logPtr, 240, 60, logs[2].x, logs[1].y); // drawing 3 logs as well
+	drawImage(logPtr, 240, 60, logs[2].x, logs[1].y); 
 	logs[2].x += 8;
 	if (logs[2].x + 240 > 1280)
 	{
 		logs[2].x = 0;
 	}
-	drawImage(logPtr, 240, 60, logs[3].x, logs[1].y); // drawing 3 logs as well
+	drawImage(logPtr, 240, 60, logs[3].x, logs[1].y); 
 	logs[3].x += 8;
 	if (logs[3].x + 240 > 1280)
 	{
 		logs[3].x = 0;
 	}
-	drawImage(turtlesPtr, 300, 60, turtle[1].x, turtle[1].y);
+	drawImage(turtlesPtr, 300, 60, turtle[1].x, turtle[1].y); // drawing turtles
 	turtle[1].x -= 12;
 	if (turtle[1].x < 0)
 	{
 		turtle[1].x = 980;
 	}
+
+	drawImage(statsPtr, 300, 60, 0, 0); 
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
+
+// drawLevel2Ob uses drawImage to draw all the obstacles in level 2 (lava with rocks, grass with animals).
 void drawLevel2Ob() {
-    drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
+	// same procedure as in previous function
+    drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y); 
     rock[1].x += 5;
     if (rock[1].x+120>1280) {
         rock[1].x = 0;
@@ -390,20 +413,19 @@ if(pigs[1].x < 0) {
 }
 drawImage(pigPtr, 60, 60, pigs[2].x, pigs[2].y);
 pigs[2].x -= 5;
-if(pigs[1].x < 0) {
-	pigs[1].x = 1220;
+if(pigs[2].x < 0) {
+	pigs[2].x = 1220;
 }
 drawImage(pigPtr, 60, 60, pigs[3].x, pigs[3].y);
 pigs[3].x -= 5;
-if(pigs[1].x < 0) {
-	pigs[1].x = 1220;
+if(pigs[3].x < 0) {
+	pigs[3].x = 1220;
 }
-
+	drawImage(statsPtr, 300, 60, 0, 0); 
     drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
 
-
-
+// drawLevel determines if the first level or 2nd level background should be drawn based on boolean value l.
 void drawLevel(int l)
 {
 	if (l == 1)
@@ -415,6 +437,11 @@ void drawLevel(int l)
 		drawImage(level3_4Ptr, 1280, 720, 0, 0);
 	}
 }
+
+// collision functions: take an integer input i representing a pixel location fromt he frog character
+// and returning TRUE if a collision has occured between frog and specified obstacle.
+// separate functions are required for each obstacle due to uniqe shape and location.
+
 bool carCollision(int i)
 {
 	return (car[1].x + 100 == xfrog + i && car[1].y == yfrog) || (car[1].x == xfrog + i && car[1].y == yfrog) || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
@@ -444,6 +471,7 @@ bool turtleCollision(int i)
 		   turtle[1].x + 210 == xfrog + i && turtle[1].y == yfrog ||
 		   turtle[1].x + 270 == xfrog + i && turtle[1].y == yfrog;
 }
+
 // /* Draw a pixel */
 // void drawPixel(Pixel *pixel){
 // 	long int location =(pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
@@ -457,7 +485,8 @@ bool turtleCollision(int i)
 
 // }
 
-// functions taken from project part 1 below
+
+// functions borrowed from project part 1 below
 
 // Init_GPIO initializes a GPIO line using the INP_GPIO and OUT_GPIO functions.
 // @param: line - the line number to initialize, code - function code describing whtehr the line is input/output
@@ -517,6 +546,7 @@ void Wait(int s)
 }
 
 // Menu_Read_SNES used to read SNES inputs while on the main menu
+// returns int cursor, which tells which optiont he frog is on when A is pressed.
 int Menu_Read_SNES()
 {
 	gpio = getGPIOPtr(); // get gpio pointer
@@ -554,7 +584,7 @@ int Menu_Read_SNES()
 				if (b == 0)
 				{ // if the button is pressed
 
-					switch (i)
+					switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
 					{
 
 					// UP
@@ -589,7 +619,7 @@ int Menu_Read_SNES()
 	return cursor;
 }
 
-// function to update frog position on display when joypad buttons are pressed.
+// function to update frog position on display when joypad buttons are pressed in the game state.
 void InterpretButtons(int i)
 {
 
@@ -851,9 +881,12 @@ int Game_Read_SNES()
 		}
 		Wait(200000);
 	}
+	// if START is pressed, open the pause menu
+
 }
 
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
+// returns a number between mina nd max, for random location of value pack.
 int randBetween(double min, double max)
 {
 	return ((int)rand() / RAND_MAX) * (max - min) + min;
