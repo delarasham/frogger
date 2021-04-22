@@ -41,6 +41,29 @@ with SNES controller on the Raspberry Pi, using concepts in video programming an
 #include "graphics/winmessage.h"
 #include "graphics/losemessage.h"
 
+// including numbers
+#include "nums/0.h"
+#include "nums/1.h"
+#include "nums/2.h"
+#include "nums/3.h"
+#include "nums/4.h"
+#include "nums/5.h"
+#include "nums/6.h"
+#include "nums/7.h"
+#include "nums/8.h"
+#include "nums/9.h"
+
+// global pointers to digits
+short int *n0Ptr = (short int *)n0.pixel_data;
+short int *n1Ptr = (short int *)n1.pixel_data;
+short int *n2Ptr = (short int *)n2.pixel_data;
+short int *n3Ptr = (short int *)n3.pixel_data;
+short int *n4Ptr = (short int *)n4.pixel_data;
+short int *n5Ptr = (short int *)n5.pixel_data;
+short int *n6Ptr = (short int *)n6.pixel_data;
+short int *n7Ptr = (short int *)n7.pixel_data;
+short int *n8Ptr = (short int *)n8.pixel_data;
+short int *n9Ptr = (short int *)n9.pixel_data;
 // SNES reader definitions
 static unsigned int *gpio;
 
@@ -71,6 +94,8 @@ void Read_SNES();
 void Menu_Read_SNES();
 void quitGame();
 void resumeMenu();
+void drawDigit();
+void drawMoves();
 // global variable for the frog's coordinates
 int xfrog, yfrog;
 
@@ -102,6 +127,7 @@ short int *valuepackPtr = (short int *)valuepack.pixel_data;
 short int *statsPtr = (short int *)stats.pixel_data;
 short int *winPtr = (short int *)winmessage.pixel_data;
 short int *losePtr = (short int *)losemessage.pixel_data;
+
 
 short int stage[1280][720 + 1];
 // functions borrowed from project part 1 below
@@ -339,6 +365,91 @@ void initOb()
 	pigs[2].y = pigs[3].y = 60;
 }
 
+void drawDigit(int i,int x, int y){
+	switch (i){
+		case 0:
+		drawImage(n0Ptr,20,30,x,y);
+		break;
+		case 1:
+		drawImage(n1Ptr,20,30,x,y);
+		break;
+		case 2:
+		drawImage(n2Ptr,20,30,x,y);
+                break;
+		case 3:
+		drawImage(n3Ptr,20,30,x,y);
+                break;
+		case 4:
+		drawImage(n4Ptr,20,30,x,y);	// if START is pressed, program ends
+                break;
+		case 5:
+		drawImage(n5Ptr,20,30,x,y);
+                break;
+		case 6:
+		drawImage(n6Ptr,20,30,x,y);
+                break;
+		case 7:
+		drawImage(n7Ptr,20,30,x,y);
+                break;
+		case 8:
+		drawImage(n8Ptr,20,30,x,y);
+                break;
+		case 9:
+		drawImage(n9Ptr,20,30,x,y);
+                break;
+	}
+}
+void drawMoves(int i){
+	if( i<10){
+		drawDigit(i,280,0);
+	}else{
+		int a = i/10;
+		int b = i%10;
+		drawDigit(a,260,0);
+		drawDigit(b,280,0);
+	}
+}
+void drawTime(int i){
+	if( i<10){
+		drawDigit(i,135,0);
+	}else if(i<100){
+		int a = i/10;
+		int b = i%10;
+		drawDigit(a,115,0);
+		drawDigit(b,135,0);
+	}
+	else{
+		int a = i%10;
+		int temp = i/10;
+		int b = temp%10;
+		int c = temp/10;
+		drawDigit(a,135,0);
+		drawDigit(b,115,0);
+		drawDigit(c,95,0);
+	}
+}
+void drawScore(int i){
+	if( i<10){
+		drawDigit(i,135,30);
+	}else if(i<100){
+		int a = i/10;
+		int b = i%10;
+		drawDigit(a,115,30);
+		drawDigit(b,135,30);
+	}
+	else{
+		int a = i%10;
+		int temp = i/10;
+		int b = temp%10;
+		int c = temp/10;
+		drawDigit(a,135,30);
+		drawDigit(b,115,30);
+		drawDigit(c,95,30);
+	}
+}
+void drawLives(int i){
+	drawDigit(i,280,30);
+}
 // drawLevel1Ob uses drawImage and draws all the obstacles in level 1 (road with cars, water).
 void drawLevel1Ob()
 {
@@ -446,6 +557,10 @@ void drawLevel1Ob()
 		turtle[2].x = 1280;
 	}
 	drawImage(statsPtr, 300, 60, 0, 0);
+	drawMoves(moves);
+	drawTime(timeLeft);
+	//drawScore(score);
+	drawLives(lives);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
@@ -547,6 +662,11 @@ void drawLevel2Ob()
 		pigs[3].x = 1280;
 	}
 	drawImage(statsPtr, 300, 60, 0, 0);
+	drawImage(statsPtr, 300, 60, 0, 0);
+	drawMoves(moves);
+	drawTime(timeLeft);
+	//drawScore(score);
+	drawLives(lives);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
