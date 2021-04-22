@@ -1216,7 +1216,7 @@ void Game_Read_SNES()
 //
 void valuePack()
 {
-	if (timePassed >= 10) { // if 30 seconds passes
+	if (timePassed >= 30) { // if 30 seconds passes
 		// print a value pack somewhere on the screen. the value pack will add one life.
 		drawImage(valuepackPtr, 60, 60, xvaluepack, yvaluepack); //xvaluepack, yvaluepack);
 		drawCanvas();
@@ -1291,7 +1291,7 @@ int randBetween(int min, int max)
 int main()
 {
 
-	moves = 40;
+	moves = 90;
 	lives = 1;		// initializing moves to 40 and lives to 4
 	timeLeft = 120; // given 120 seconds
 
