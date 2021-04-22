@@ -38,6 +38,8 @@ with SNES controller on the Raspberry Pi, using concepts in video programming an
 #include "graphics/turtles 60x300.h"
 #include "graphics/valuepack60x60.h"
 #include "graphics/stats 300x60.h"
+#include "graphics/winmessage.h"
+#include "graphics/losemessage.h"
 
 // SNES reader definitions
 static unsigned int *gpio;
@@ -69,6 +71,7 @@ int xfrog, yfrog;
 
 // variable for the number of moves and lives
 int moves, lives, timeLeft;
+float timeElapsed = 0;
 bool level1 = true;
 
 // global pointers for each image to draw
@@ -748,6 +751,8 @@ void InterpretButtons(int i)
 // Game_Read_SNES used to read SNES controller input while in the main game state
 int Game_Read_SNES()
 {
+	clock_t start = clock();
+
 	gpio = getGPIOPtr(); // get gpio pointer
 
 	int buttons[17]; // array for the buttons
@@ -787,9 +792,22 @@ int Game_Read_SNES()
 				drawCanvas();
 			}
 
+			clock_t end = clock();
+			float timeOfLoop = (float) ((end-start)/CLOCKS_PER_SEC);
+			timeElapsed += timeOfLoop;
+			if (timeElapsed == 1) { // if a full second goes by
+				timeLeft -= 1; // time left - time elapsed
+				timeElapsed = 0;
+			}
+
 			// checking if game over
-			if (lives == 0) {
-				drawImage();
+			if (lives == 0 || moves == 0 ) { //|| timeLeft == 0) {
+				gameOver();
+			}
+
+			// checking if game won
+			if (yfrog == 0 && level1 == FALSE) {
+				gameWon();
 			}
 
 			// doing collision detection
@@ -898,6 +916,18 @@ int Game_Read_SNES()
 
 }
 
+void gameOver() {
+	drawImage(losePtr, 500, 500, 390, 110);
+	drawCanvas();
+	exit(0);
+}
+
+void gameWon() {
+	drawImage(winPtr, 500, 500, 390, 110);
+	drawCanvas();
+	exit(0);
+}
+
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
 // returns a number between mina nd max, for random location of value pack.
 int randBetween(double min, double max)
@@ -911,12 +941,11 @@ int main()
 
 	moves = 40;
 	lives = 4;		// initializing moves to 40 and lives to 4
-	timeLeft = 120; // given 120 seconds
-	clock_t start = clock();
+	timeLeft = 10; // given 120 seconds
 
 	// put this somewhere in the thread, right before you display the time:
 	/*
-	timeLeft -= (int) start/CLOCKS_PER_SEC
+	timeLeft -= (int) start/CLOCKS_PER_SEC;
 	if (timeLeft = 30) {
 		// print a value pack somewhere on the screen. the value pack will add one life.
 		xvaluepack = randBetween(0, 1220);
