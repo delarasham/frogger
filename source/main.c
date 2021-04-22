@@ -73,7 +73,7 @@ int xfrog, yfrog;
 int moves, lives, timeLeft, score;
 double timeElapsed;
 bool level1 = true;
-
+int frogspeed =0;
 // global pointers for each image to draw
 short int *titlePtr = (short int *)title.pixel_data;
 short int *level1_2Ptr = (short int *)level1_2.pixel_data;
@@ -344,6 +344,7 @@ void drawLevel1Ob()
 	}
 
 	drawImage(statsPtr, 300, 60, 0, 0); 
+	xfrog+=frogspeed;
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
 
@@ -427,6 +428,8 @@ if(pigs[3].x < 0) {
 	pigs[3].x = 1220;
 }
 	drawImage(statsPtr, 300, 60, 0, 0); 
+	if(xfrog+frogspeed<1280-60 && xfrog+frogspeed>60)
+		xfrog+=frogspeed;
     drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
 
@@ -442,15 +445,25 @@ void drawLevel(int l)
 		drawImage(level3_4Ptr, 1280, 720, 0, 0);
 	}
 }
+void gameOver() {
+	drawImage(losePtr, 500, 500, 390, 110);
+	drawCanvas();
+	exit(0);
+}
 
+void gameWon() {
+	drawImage(winPtr, 500, 500, 390, 110);
+	drawCanvas();
+	exit(0);
+}
 // collision functions: take an integer input i representing a pixel location fromt he frog character
 // and returning TRUE if a collision has occured between frog and specified obstacle.
 // separate functions are required for each obstacle due to uniqe shape and location.
 
 bool carCollision(int i)
 {
-	return (car[1].x + 100 == xfrog + i && car[1].y == yfrog) || (car[1].x == xfrog + i && car[1].y == yfrog) || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
-		   (car[2].x + 100 == xfrog + i && car[2].y == yfrog) || (car[2].x == xfrog + i && car[2].y == yfrog) || // same thing with car2
+	return ((( xfrog<car[1].x+100 && xfrog+60>car[1].x ) && ( yfrog<car[1].y+60 && yfrog+60>car[1].y ) )) || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
+		    ((( xfrog<car[2].x+100 && xfrog+60>car[2].x ) && ( yfrog<car[2].y+60 && yfrog+60>car[2].y ) )) || // same thing with car2
 		   //secondCar2x + 100 == xfrog+i && car[2].y == yfrog || secondCar2x == xfrog+i && car[2].y == yfrog || // and so on...
 		   (car[3].x + 100 == xfrog + i && car[3].y == yfrog) || (car[3].x == xfrog + i && car[3].y == yfrog) ||
 		   (car[4].x + 180 == xfrog + i && car[4].y == yfrog) || (car[4].x == xfrog + i && car[4].y == yfrog) ||
@@ -462,11 +475,17 @@ bool logCollision(int i)
 		   logs[2].x + 30 == xfrog + i && logs[1].y == yfrog || logs[2].x + 90 == xfrog + i && logs[1].y == yfrog || logs[2].x + 150 == xfrog + i && logs[1].y == yfrog || logs[2].x + 210 == xfrog + i && logs[1].y == yfrog ||
 		   logs[3].x + 30 == xfrog + i && logs[1].y == yfrog || logs[3].x + 90 == xfrog + i && logs[1].y == yfrog || logs[3].x + 150 == xfrog + i && logs[1].y == yfrog || logs[3].x + 210 == xfrog + i && logs[1].y == yfrog;
 }
-bool lilyCollision(int i)
+bool lilyCollisionr()
 {
-	return lilypads[1].x + 40 == xfrog + i && lilypads[1].y == yfrog || // if frog north border hits top middle pixel of lilypad
-		   lilypads[2].x + 40 == xfrog + i && lilypads[1].y == yfrog ||
-		   lilypads[3].x + 40 == xfrog + i && lilypads[1].y == yfrog;
+	return ((( xfrog<lilypads[1].x+80 && xfrog+60>lilypads[1].x ) && ( yfrog<lilypads[1].y+60 && yfrog+60>lilypads[1].y ) ))|| // if frog north border hits top middle pixel of lilypad
+		   ((( xfrog<lilypads[2].x+80 && xfrog+60>lilypads[2].x ) && ( yfrog<lilypads[2].y+60 && yfrog+60>lilypads[2].y ) )) ||
+		   ((( xfrog<lilypads[3].x+80 && xfrog+60>lilypads[3].x ) && ( yfrog<lilypads[3].y+60 && yfrog+60>lilypads[3].y ) ));
+}
+bool lilyCollisionl()
+{
+	return ((( xfrog<lilypads[4].x+80 && xfrog+60>lilypads[4].x ) && ( yfrog<lilypads[4].y+60 && yfrog+60>lilypads[4].y ) ))||
+		   ((( xfrog<lilypads[5].x+80 && xfrog+60>lilypads[5].x ) && ( yfrog<lilypads[5].y+60 && yfrog+60>lilypads[5].y ) ))||
+		   ((( xfrog<lilypads[6].x+80 && xfrog+60>lilypads[6].x ) && ( yfrog<lilypads[6].y+60 && yfrog+60>lilypads[6].y ) ));
 }
 bool turtleCollision(int i)
 {
@@ -476,7 +495,89 @@ bool turtleCollision(int i)
 		   turtle[1].x + 210 == xfrog + i && turtle[1].y == yfrog ||
 		   turtle[1].x + 270 == xfrog + i && turtle[1].y == yfrog;
 }
+void collisionDetect(){
+	if (level1)
+				{
+					//printf("%d %d %d %d",xfrog,car[1].x,yfrog,car[1].y);
+					if (carCollision())
+					{
+						lives--;
+						xfrog = 610;
+						yfrog = 660;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+					}
+					else if(yfrog>240 && yfrog<60){
+						frogspeed=0;
+					}
+					// collision with lilyads in lane 1
+					if (lilyCollisionr())
+					{
+						// move frog along with the lilypad
+						//drawCanvas();
+						//xfrog += 10;
+						frogspeed =10;
+						//drawImage(frogPtr, 60, 60, xfrog, yfrog);
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
 
+						// collision with logs lane 2
+						// check if frog north border collides with any 1 of 4 pixels evenly spread out on the log
+					}
+					else if (logCollision())
+					{
+						// move frog along with the lilypad
+						//drawCanvas();
+						//xfrog += 8;
+						frogspeed =8;
+						//drawImage(frogPtr, 60, 60, xfrog, yfrog);
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+
+						// collisions with lilypads in lane 3
+					}
+					else if (lilyCollisionl())
+					{
+						// move frog along with the lilypad
+						// drawCanvas();
+						//xfrog -= 6;
+						frogspeed =-6;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+
+						// collisions with turtles (any 1 of 5 pixels)
+					}
+					else if (turtleCollision())
+					{
+						// move frog along with the lilypad
+						//drawCanvas();
+						//xfrog -= 12;
+						frogspeed =-12;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+					}else{
+						frogspeed =0;
+					}
+					// something wrong here
+					// else if (yfrog<240 && yfrog>60 && !logCollision() && !lilyCollision() && !turtleCollision()) {
+					// // frog drowns in water :( reset to starting place
+					// //lives--;		
+					// xfrog = 610;		
+					// yfrog = 660;
+					// frogspeed = 0;
+					// drawLevel(1);
+					// 	drawLevel1Ob();
+					// 	drawCanvas();
+					// } 
+					
+				
+				}
+}
 // /* Draw a pixel */
 // void drawPixel(Pixel *pixel){
 // 	long int location =(pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
@@ -639,7 +740,9 @@ void InterpretButtons(int i)
 		{ // edge protection, make sure frog doesnt go outside screen
 			if (level1)
 			{
+				frogspeed=0;
 				yfrog -= 60;
+				collisionDetect();
 				drawLevel(1);
 				drawLevel1Ob();
 				drawCanvas();
@@ -649,7 +752,8 @@ void InterpretButtons(int i)
 			{
 				yfrog -= 60;
 				drawLevel(2);
-				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				collisionDetect();
+				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
 				drawCanvas();
 				moves--;
@@ -658,10 +762,12 @@ void InterpretButtons(int i)
 		else if (level1)
 		{
 			// go to the next 2 levels, new background screen
+			frogspeed=0;
 			level1 = false;
 			drawLevel(2);
 			yfrog = 720 - 60;
-			drawImage(frogPtr, 60, 60, xfrog, yfrog);
+			collisionDetect();
+			drawLevel2Ob();
 			drawCanvas();
 			moves--;
 		}
@@ -670,8 +776,10 @@ void InterpretButtons(int i)
 		printf("You have pressed Joy-pad DOWN\n"); // 60 px down
 		if (yfrog + 60 < 720 && level1)
 		{
+			frogspeed=0;
 			yfrog += 60;
 			drawLevel(1);
+			collisionDetect();
 			drawLevel1Ob();
 			drawCanvas();
 			moves--;
@@ -682,7 +790,8 @@ void InterpretButtons(int i)
 			{
 				yfrog += 60;
 				drawLevel(2);
-				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				collisionDetect();
 				drawLevel2Ob();
 				drawCanvas();
 				moves--;
@@ -691,9 +800,9 @@ void InterpretButtons(int i)
 			{
 				level1 = true;
 				yfrog = 0;
-				yfrog += 60;
 				drawLevel(1);
 				drawLevel1Ob();
+				collisionDetect();
 				drawCanvas();
 				moves--;
 			}
@@ -707,7 +816,9 @@ void InterpretButtons(int i)
 			{
 				xfrog -= 60;
 				drawLevel(1);
+				collisionDetect();
 				drawLevel1Ob();
+				
 				drawCanvas();
 				moves--;
 			}
@@ -717,6 +828,7 @@ void InterpretButtons(int i)
 				drawLevel(2);
 				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
+				collisionDetect();
 				drawCanvas();
 				moves--;
 			}
@@ -731,6 +843,7 @@ void InterpretButtons(int i)
 				xfrog += 60;
 				drawLevel(1);
 				drawLevel1Ob();
+				collisionDetect();
 				drawCanvas();
 				moves--;
 			}
@@ -738,8 +851,9 @@ void InterpretButtons(int i)
 			{
 				xfrog += 60;
 				drawLevel(2);
-				drawImage(frogPtr, 60, 60, xfrog, yfrog);
+				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
+				collisionDetect();
 				drawCanvas();
 				moves--;
 			}
@@ -817,79 +931,12 @@ int Game_Read_SNES()
 			}
 
 			// doing collision detection
-
+			collisionDetect();
 			// loop through 60 top 60 pixels of the frog (north border)
 			for (int i = 0; i < 60; i++)
 			{
 				// checking collissions for all cars in level 1
-				if (level1)
-				{
-					if (carCollision(i))
-					{
-						lives--;
-						xfrog = 610;
-						yfrog = 660;
-						drawLevel(1);
-						drawLevel1Ob();
-						drawCanvas();
-					}
-
-					// collision with lilypads in lane 1
-					if (lilyCollision(i))
-					{
-						// move frog along with the lilypad
-						xfrog += 10;
-						drawLevel(1);
-						drawLevel1Ob();
-						drawCanvas();
-
-						// collision with logs lane 2
-						// check if frog north border collides with any 1 of 4 pixels evenly spread out on the log
-					}
-					else if (logCollision(i))
-					{
-						// move frog along with the lilypad
-						//drawCanvas();
-						xfrog += 8;
-						drawLevel(1);
-						drawLevel1Ob();
-						drawCanvas();
-
-						// collisions with lilypads in lane 3
-					}
-					else if (lilyCollision(i))
-					{
-						// move frog along with the lilypad
-						// drawCanvas();
-						xfrog -= 6;
-						drawLevel(1);
-						drawLevel1Ob();
-						drawCanvas();
-
-						// collisions with turtles (any 1 of 5 pixels)
-					}
-					else if (turtleCollision(i))
-					{
-						// move frog along with the lilypad
-						//drawCanvas();
-						xfrog -= 12;
-						drawLevel(1);
-						drawLevel1Ob();
-						drawCanvas();
-					}
-
-					/* something wrong here
-				else if (yfrog<=240) {
-					// frog drowns in water :( reset to starting place
-					lives--;		
-					xfrog = 610;		
-					yfrog = 660;
-					drawCanvas();
-					drawImage(frogPtr, 60, 60, xfrog, yfrog);
-				} 
-				*/
-				}
-			}
+				
 
 			for (int i = 1; i <= 16; i++)
 			{ // loop through each button
@@ -913,20 +960,6 @@ int Game_Read_SNES()
 
 }
 
-void gameOver() {
-	drawImage(losePtr, 500, 500, 390, 110);
-	drawCanvas();
-	score = 2*(lives + timeLeft + moves);
-	// how to print score???
-	exit(0);
-}
-
-void gameWon() {
-	drawImage(winPtr, 500, 500, 390, 110);
-	drawCanvas();
-	score = 2*(lives + timeLeft + moves);
-	exit(0);
-}
 
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
 // returns a number between mina nd max, for random location of value pack.
