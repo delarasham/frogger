@@ -65,7 +65,12 @@ typedef struct
 
 struct fbs framebufferstruct;
 void drawPixel(Pixel *pixel);
-
+void gameOver();
+void Game_Read_SNES();
+void Read_SNES();
+void Menu_Read_SNES();
+void quitGame();
+void resumeMenu();
 // global variable for the frog's coordinates
 int xfrog, yfrog;
 
@@ -98,7 +103,7 @@ short int *statsPtr = (short int *)stats.pixel_data;
 short int *winPtr = (short int *)winmessage.pixel_data;
 short int *losePtr = (short int *)losemessage.pixel_data;
 
-short int stage[1280 + 1][720 + 1];
+short int stage[1280][720 + 1];
 // functions borrowed from project part 1 below
 
 // Init_GPIO initializes a GPIO line using the INP_GPIO and OUT_GPIO functions.
@@ -165,7 +170,7 @@ void Read_SNES()
 	Init_GPIO(LAT, 1);
 	Init_GPIO(DAT, 0);
 	// pressed is zero if no button is pressed
-	int pressed = 0;
+	//int pressed = 0;
 	//buttons[4]=1;		// initialize START as unpressed
 	for (int i = 1; i <= 12; i++)
 	{
@@ -189,7 +194,7 @@ void Read_SNES()
 void drawCanvas()
 {
 	framebufferstruct = initFbInfo();
-	long int i = 0;
+	//long int i = 0;
 	for (int x = 0; x < 1280; x++)
 	{
 		for (int y = 0; y < 720; y++) // looping through all pixels in the screen
@@ -221,7 +226,8 @@ void drawImage(short int *imagePtr, int width, int length, int xstart, int ystar
 			pixel->x = x;
 			pixel->y = y;
 			//drawPixel(pixel);
-			stage[x][y] = pixel->color;
+			if((x>=0&&x<1280)&&(y>=0&&y<720))
+				stage[x][y] = pixel->color;
 			i++;
 		}
 	}
@@ -256,7 +262,7 @@ struct Turtle
 {
 	int x;
 	int y;
-} turtle[2];
+} turtle[3];
 struct Rock
 {
 	int x;
@@ -282,11 +288,11 @@ void initOb()
 	car[2].x = 0;
 	//int secondCar2x = 500;
 	car[2].y = 540;
-	car[3].x = 1180;
+	car[3].x = 200;
 	car[3].y = 480;
-	car[4].x = 1100;
+	car[4].x = 350;
 	car[4].y = 420;
-	car[5].x = 1180;
+	car[5].x = 1000;
 	car[5].y = 360;
 
 	lilypads[1].x = 0;
@@ -303,6 +309,8 @@ void initOb()
 	lilypads[4].y = lilypads[5].y = lilypads[6].y = 120;
 	turtle[1].x = 980;
 	turtle[1].y = 60;
+	turtle[2].x = 500;
+	turtle[2].y = 60;
 
 	rock[1].x = 0;
 	rock[2].x = 200;
@@ -322,11 +330,11 @@ void initOb()
 	cows[1].x = 0;
 	cows[2].x = 200;
 	cows[1].y = cows[2].y = 240;
-	cows[3].x = 0;
+	cows[3].x = 100;
 	cows[3].y = 120;
 	pigs[1].x = 1220;
 	pigs[1].y = 180;
-	pigs[2].x = 1220;
+	pigs[2].x = 1000;
 	pigs[3].x = 720;
 	pigs[2].y = pigs[3].y = 60;
 }
@@ -335,17 +343,17 @@ void initOb()
 void drawLevel1Ob()
 {
 	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y); // drawing car #1
-	car[1].x = car[1].x - 3;						 // animating the car, moves from right to left at a speed of 3.
-	if (car[1].x < 0)								 // checking edge case, when car reaches the end of screen
+	car[1].x = car[1].x - 7;						 // animating the car, moves from right to left at a speed of 3.
+	if (car[1].x < -100)								 // checking edge case, when car reaches the end of screen
 	{
-		car[1].x = 1180;
+		car[1].x = 1280;
 	}
 	// repeating with all other obstacles
 	drawImage(car2Ptr, 100, 60, car[2].x, car[2].y);
-	car[2].x = car[2].x + 2;
-	if (car[2].x + 100 > 1280)
+	car[2].x = car[2].x + 5;
+	if (car[2].x > 1280)
 	{
-		car[2].x = 0;
+		car[2].x = -100;
 	}
 	// drawImage(car2Ptr, 100, 60, secondCar2x, car[2].y); // drawing a second car in lane 2
 	// secondCar2x += 15;
@@ -354,84 +362,89 @@ void drawLevel1Ob()
 	// }
 	drawImage(car3Ptr, 100, 60, car[3].x, car[3].y);
 	//drawImage(car3Ptr, 100, 60, car[3].x-200, car[3].y);
-	car[3].x = car[3].x - 5;
-	if (car[3].x < 0)
+	car[3].x = car[3].x - 10;
+	if (car[3].x < -100)
 	{
-		car[3].x = 1180;
+		car[3].x = 1280;
 	}
 	drawImage(car4Ptr, 180, 60, car[4].x, car[4].y);
-	car[4].x = car[4].x - 2;
-	if (car[4].x < 0)
+	car[4].x = car[4].x - 7;
+	if (car[4].x < -180)
 	{
-		car[4].x = 1100;
+		car[4].x = 1280;
 	}
 	drawImage(car1Ptr, 100, 60, car[5].x, car[5].y);
-	car[5].x = car[5].x - 4;
-	if (car[5].x < 0)
+	car[5].x = car[5].x - 6;
+	if (car[5].x < -100)
 	{
-		car[5].x = 1180;
+		car[5].x = 1280;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[1].x, lilypads[1].y); // drawing 3 lilypadss in lane 1
 	lilypads[1].x += 10;
-	if (lilypads[1].x + 80 > 1280)
+	if (lilypads[1].x > 1280)
 	{
-		lilypads[1].x = 0;
+		lilypads[1].x = -80;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[2].x, lilypads[1].y);
 	lilypads[2].x += 10;
-	if (lilypads[2].x + 80 > 1280)
+	if (lilypads[2].x > 1280)
 	{
-		lilypads[2].x = 0;
+		lilypads[2].x = -80;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[3].x, lilypads[1].y);
 	lilypads[3].x += 10;
-	if (lilypads[3].x + 80 > 1280)
+	if (lilypads[3].x > 1280)
 	{
-		lilypads[3].x = 0;
+		lilypads[3].x = 80;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[4].x, lilypads[4].y); // drawing 3 lilypads in lane 3
 	lilypads[4].x -= 6;
-	if (lilypads[4].x < 0)
+	if (lilypads[4].x < -80)
 	{
-		lilypads[4].x = 1200;
+		lilypads[4].x = 1280;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[5].x, lilypads[4].y);
 	lilypads[5].x -= 6;
-	if (lilypads[5].x < 0)
+	if (lilypads[5].x < -80)
 	{
-		lilypads[5].x = 1200;
+		lilypads[5].x = 1280;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[6].x, lilypads[4].y);
 	lilypads[6].x -= 6;
-	if (lilypads[6].x < 0)
+	if (lilypads[6].x < -80)
 	{
-		lilypads[6].x = 1200;
+		lilypads[6].x = 1280;
 	}
 	drawImage(logPtr, 240, 60, logs[1].x, logs[1].y); // drawing 3 logs as well
 	logs[1].x += 8;
-	if (logs[1].x + 240 > 1280)
+	if (logs[1].x > 1280)
 	{
-		logs[1].x = 0;
+		logs[1].x = -240;
 	}
 	drawImage(logPtr, 240, 60, logs[2].x, logs[1].y);
 	logs[2].x += 8;
-	if (logs[2].x + 240 > 1280)
+	if (logs[2].x > 1280)
 	{
-		logs[2].x = 0;
+		logs[2].x = -240;
 	}
 	drawImage(logPtr, 240, 60, logs[3].x, logs[1].y);
 	logs[3].x += 8;
-	if (logs[3].x + 240 > 1280)
+	if (logs[3].x > 1280)
 	{
-		logs[3].x = 0;
+		logs[3].x = -240;
 	}
 	drawImage(turtlesPtr, 300, 60, turtle[1].x, turtle[1].y); // drawing turtles
 	turtle[1].x -= 12;
-	if (turtle[1].x < 0)
+	if (turtle[1].x < -300)
 	{
-		turtle[1].x = 980;
+		turtle[1].x = 1280;
 	}
-
+	drawImage(turtlesPtr, 300, 60, turtle[2].x, turtle[2].y); // drawing turtles
+	turtle[2].x -= 12;
+	if (turtle[2].x < -300)
+	{
+		turtle[2].x = 1280;
+	}
 	drawImage(statsPtr, 300, 60, 0, 0);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
@@ -444,94 +457,94 @@ void drawLevel2Ob()
 	// same procedure as in previous function
 	drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
 	rock[1].x += 5;
-	if (rock[1].x + 120 > 1280)
+	if (rock[1].x > 1280)
 	{
-		rock[1].x = 0;
+		rock[1].x = -120;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[2].x, rock[2].y);
 	rock[2].x += 5;
-	if (rock[2].x + 120 > 1280)
+	if (rock[2].x  > 1280)
 	{
-		rock[2].x = 0;
+		rock[2].x = -120;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[3].x, rock[3].y);
 	rock[3].x -= 5;
-	if (rock[3].x < 0)
+	if (rock[3].x < -180)
 	{
-		rock[3].x = 1100;
+		rock[3].x = 1280;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[4].x, rock[4].y);
 	rock[4].x -= 5;
-	if (rock[4].x < 0)
+	if (rock[4].x < -180)
 	{
-		rock[4].x = 1100;
+		rock[4].x = 1280;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[5].x, rock[5].y);
 	rock[5].x += 5;
-	if (rock[5].x + 120 > 1280)
+	if (rock[5].x > 1280)
 	{
-		rock[5].x = 0;
+		rock[5].x = -120;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[6].x, rock[6].y);
 	rock[6].x -= 5;
-	if (rock[6].x < 0)
+	if (rock[6].x < -120)
 	{
-		rock[6].x = 1160;
+		rock[6].x = 1280;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[7].x, rock[7].y);
 	rock[7].x -= 5;
-	if (rock[7].x < 0)
+	if (rock[7].x < -120)
 	{
-		rock[7].x = 1160;
+		rock[7].x = 1280;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[8].x, rock[8].y);
 	rock[8].x += 5;
-	if (rock[8].x + 180 > 1280)
+	if (rock[8].x  > 1280)
 	{
-		rock[8].x = 0;
+		rock[8].x = -180;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[9].x, rock[9].y);
 	rock[9].x += 5;
-	if (rock[9].x + 180 > 1280)
+	if (rock[9].x  > 1280)
 	{
-		rock[9].x = 0;
+		rock[9].x = -180;
 	}
 
 	drawImage(cowPtr, 100, 60, cows[1].x, cows[1].y);
 	cows[1].x += 5;
-	if (cows[1].x + 100 > 1280)
+	if (cows[1].x > 1280)
 	{
-		cows[1].x = 0;
+		cows[1].x = -100;
 	}
 	drawImage(cowPtr, 100, 60, cows[2].x, cows[2].y);
 	cows[2].x += 5;
-	if (cows[2].x + 100 > 1280)
+	if (cows[2].x  > 1280)
 	{
-		cows[2].x = 0;
+		cows[2].x = -100;
 	}
 	drawImage(cowPtr, 100, 60, cows[3].x, cows[3].y);
 	cows[3].x += 5;
-	if (cows[3].x + 100 > 1280)
+	if (cows[3].x  > 1280)
 	{
-		cows[3].x = 0;
+		cows[3].x = -100;
 	}
 	drawImage(pigPtr, 60, 60, pigs[1].x, pigs[1].y);
 	pigs[1].x -= 5;
-	if (pigs[1].x < 0)
+	if (pigs[1].x < 60)
 	{
-		pigs[1].x = 1220;
+		pigs[1].x = 1280;
 	}
 	drawImage(pigPtr, 60, 60, pigs[2].x, pigs[2].y);
 	pigs[2].x -= 5;
-	if (pigs[2].x < 0)
+	if (pigs[2].x < -60)
 	{
-		pigs[2].x = 1220;
+		pigs[2].x = 1280;
 	}
 	drawImage(pigPtr, 60, 60, pigs[3].x, pigs[3].y);
 	pigs[3].x -= 5;
-	if (pigs[3].x < 0)
+	if (pigs[3].x < -60)
 	{
-		pigs[3].x = 1220;
+		pigs[3].x = 1280;
 	}
 	drawImage(statsPtr, 300, 60, 0, 0);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
@@ -557,15 +570,15 @@ void gameOver()
 	drawCanvas();
 	gpio = getGPIOPtr(); // get gpio pointer
 
-	int buttons[17]; // array for the buttons
+	//int buttons[17]; // array for the buttons
 	// initializing 3 GPIO lines
 	Init_GPIO(CLK, 1);
 	Init_GPIO(LAT, 1);
 	Init_GPIO(DAT, 0);
 
 	int pressed = 0;
-	int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
-	buttons[9] = 1; // initialize A as unpressed
+	//int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
+	//buttons[9] = 1; // initialize A as unpressed
 	while (pressed == 0)
 	{
 		// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
@@ -580,7 +593,7 @@ void gameOver()
 			Write_Clock(0);
 			Wait(6);
 			int b = Read_Data();
-			buttons[i] = b;
+			//buttons[i] = b;
 
 			if (b == 0)
 			{
@@ -598,15 +611,15 @@ void gameWon()
 {
 	drawImage(winPtr, 500, 500, 390, 110);
 	drawCanvas();
-	int buttons[17]; // array for the buttons
+	//int buttons[17]; // array for the buttons
 	// initializing 3 GPIO lines
 	Init_GPIO(CLK, 1);
 	Init_GPIO(LAT, 1);
 	Init_GPIO(DAT, 0);
 
 	int pressed = 0;
-	int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
-	buttons[9] = 1; // initialize A as unpressed
+	//int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
+	//buttons[9] = 1; // initialize A as unpressed
 	while (pressed == 0)
 	{
 		// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
@@ -621,7 +634,7 @@ void gameWon()
 			Write_Clock(0);
 			Wait(6);
 			int b = Read_Data();
-			buttons[i] = b;
+			//buttons[i] = b;
 
 			if (b == 0)
 			{
@@ -668,7 +681,8 @@ bool lilyCollisionl()
 }
 bool turtleCollision()
 {
-	return (((xfrog < turtle[1].x + 300 && xfrog + 60 > turtle[1].x) && (yfrog < turtle[1].y + 60 && yfrog + 60 > turtle[1].y)));
+	return (((xfrog < turtle[1].x + 300 && xfrog + 60 > turtle[1].x) && (yfrog < turtle[1].y + 60 && yfrog + 60 > turtle[1].y)))||
+	(((xfrog < turtle[2].x + 300 && xfrog + 60 > turtle[2].x) && (yfrog < turtle[2].y + 60 && yfrog + 60 > turtle[2].y)));
 }
 bool cowPigCollision()
 {
@@ -1106,16 +1120,17 @@ void Game_Read_SNES()
 			{
 				drawLevel(1);
 				drawLevel1Ob();
-				drawImage(statsPtr, 300, 60, 0, 0); // some flickering if i put it here
+				//drawImage(statsPtr, 300, 60, 0, 0); // some flickering if i put it here
 				drawCanvas();
 			}
 			else
 			{
 				drawLevel(2);
 				drawLevel2Ob();
-				drawImage(statsPtr, 300, 60, 0, 0);
+				//drawImage(statsPtr, 300, 60, 0, 0);
 				drawCanvas();
 			}
+
 
 			// updating the time
 
