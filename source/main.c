@@ -1233,7 +1233,7 @@ void quitGame()
 // Game_Read_SNES used to read SNES controller input while in the main game state
 void Game_Read_SNES()
 {
-	moves = 40;
+	moves = 90;
 	lives = 4; // initializing moves to 40 and lives to 4
 	timeLeft = 120;
 	level1 = true;
