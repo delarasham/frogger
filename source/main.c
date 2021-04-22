@@ -562,6 +562,7 @@ void gameOver()
 			Write_Clock(1);
 		}
 	}
+	Wait(100000);
 	Menu_Read_SNES();
 }
 
@@ -602,6 +603,7 @@ void gameWon()
 			Write_Clock(1);
 		}
 	}
+	Wait(100000);
 	Menu_Read_SNES();
 }
 // collision functions: take an integer input i representing a pixel location fromt he frog character
@@ -640,32 +642,59 @@ bool turtleCollision()
 {
 	return (((xfrog < turtle[1].x + 300 && xfrog + 60 > turtle[1].x) && (yfrog < turtle[1].y + 60 && yfrog + 60 > turtle[1].y)));
 }
-void collisionDetect()
+bool cowPigCollision() 
 {
+	return 	((xfrog<cows[1].x+100 && xfrog+60>cows[1].x ) && ( yfrog<cows[1].y+60 && yfrog+60>cows[1].y )) ||
+			((xfrog<cows[2].x+100 && xfrog+60>cows[2].x ) && ( yfrog<cows[2].y+60 && yfrog+60>cows[2].y )) ||
+			((xfrog<cows[3].x+100 && xfrog+60>cows[3].x ) && ( yfrog<cows[3].y+60 && yfrog+60>cows[3].y )) ||
+			((xfrog<pigs[1].x+60 && xfrog+60>pigs[1].x ) && ( yfrog<pigs[1].y+60 && yfrog+60>pigs[1].y )) ||
+			((xfrog<pigs[2].x+60 && xfrog+60>pigs[2].x ) && ( yfrog<pigs[2].y+60 && yfrog+60>pigs[2].y )) ||
+			((xfrog<pigs[3].x+60 && xfrog+60>pigs[3].x ) && ( yfrog<pigs[3].y+60 && yfrog+60>pigs[3].y ));
+}
+
+bool rockCollisionl() // 3 4 6 7
+{
+	return	((xfrog<rock[3].x+180 && xfrog+60>rock[3].x ) && ( yfrog<rock[3].y+60 && yfrog+60>rock[3].y )) ||
+			((xfrog<rock[4].x+180 && xfrog+60>rock[4].x ) && ( yfrog<rock[4].y+60 && yfrog+60>rock[4].y )) ||
+			((xfrog<rock[6].x+120 && xfrog+60>rock[6].x ) && ( yfrog<rock[6].y+60 && yfrog+60>rock[6].y )) ||
+			((xfrog<rock[7].x+120 && xfrog+60>rock[7].x ) && ( yfrog<rock[7].y+60 && yfrog+60>rock[7].y ));
+}
+
+bool rockCollisionr() // 1 2 5 8 9
+{
+	return	((xfrog<rock[1].x+120 && xfrog+60>rock[1].x ) && ( yfrog<rock[1].y+60 && yfrog+60>rock[1].y )) ||
+			((xfrog<rock[2].x+120 && xfrog+60>rock[2].x ) && ( yfrog<rock[2].y+60 && yfrog+60>rock[2].y )) ||
+			((xfrog<rock[5].x+120 && xfrog+60>rock[5].x ) && ( yfrog<rock[5].y+60 && yfrog+60>rock[5].y )) ||
+			((xfrog<rock[8].x+180 && xfrog+60>rock[8].x ) && ( yfrog<rock[8].y+60 && yfrog+60>rock[8].y )) ||
+			((xfrog<rock[9].x+180 && xfrog+60>rock[9].x ) && ( yfrog<rock[9].y+60 && yfrog+60>rock[9].y ));
+}
+
+void collisionDetect(){
 	if (level1)
-	{
-		frogspeed = 0;
-		//printf("%d %d %d %d",xfrog,car[1].x,yfrog,car[1].y);
-		if (carCollision())
-		{
-			lives--;
-			xfrog = 610;
-			yfrog = 660;
-			drawLevel(1);
-			drawLevel1Ob();
-			drawCanvas();
-		}
-		// collision with lilyads in lane 1
-		if (lilyCollisionr())
-		{
-			// move frog along with the lilypad
-			//drawCanvas();
-			//xfrog += 10;
-			frogspeed = 10;
-			//drawImage(frogPtr, 60, 60, xfrog, yfrog);
-			drawLevel(1);
-			drawLevel1Ob();
-			drawCanvas();
+				{
+					frogspeed=0;
+					//printf("%d %d %d %d",xfrog,car[1].x,yfrog,car[1].y);
+					if (carCollision())
+					{
+						lives--;
+						xfrog = 610;
+						yfrog = 660;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+					}
+
+					// collision with lilyads in lane 1
+					if (lilyCollisionr())
+					{
+						// move frog along with the lilypad
+						//drawCanvas();
+						//xfrog += 10;
+						frogspeed =10;
+						//drawImage(frogPtr, 60, 60, xfrog, yfrog);
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
 
 			// collision with logs lane 2
 			// check if frog north border collides with any 1 of 4 pixels evenly spread out on the log
@@ -693,30 +722,63 @@ void collisionDetect()
 			drawLevel1Ob();
 			drawCanvas();
 
-			// collisions with turtles (any 1 of 5 pixels)
-		}
-		else if (turtleCollision())
-		{
-			// move frog along with the lilypad
-			//drawCanvas();
-			//xfrog -= 12;
-			frogspeed = -12;
-			drawLevel(1);
-			drawLevel1Ob();
-			drawCanvas();
-		}
-		// something wrong here
-		// else if (yfrog<240 && yfrog>60 && !logCollision() && !lilyCollision() && !turtleCollision()) {
-		// // frog drowns in water :( reset to starting place
-		// //lives--;
-		// xfrog = 610;
-		// yfrog = 660;
-		// frogspeed = 0;
-		// drawLevel(1);
-		// 	drawLevel1Ob();
-		// 	drawCanvas();
-		// }
-	}
+						// collisions with turtles (any 1 of 5 pixels)
+					}
+					else if (turtleCollision())
+					{
+						// move frog along with the lilypad
+						//drawCanvas();
+						//xfrog -= 12;
+						frogspeed =-12;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+					}
+					else if (yfrog<=240 && yfrog >=60) {
+						// frog drowns in water :( reset to starting place
+						lives--;
+						drawImage(frogPtr, 60, 60, xfrog, yfrog); // draw frog in the death place fror a split second
+						drawCanvas();
+						xfrog = 610;
+						yfrog = 660;
+						drawLevel(1);
+						drawLevel1Ob();
+						drawCanvas();
+					}
+
+				
+				} else // level 3 4 obstacles
+				{
+					frogspeed=0;
+					if (rockCollisionl()) {
+						frogspeed =-5;
+						drawLevel(2);
+						drawLevel2Ob();
+						drawCanvas();
+					} else if (rockCollisionr()) {
+						frogspeed = 5;
+						drawLevel(2);
+						drawLevel2Ob();
+						drawCanvas();
+					} else if (cowPigCollision()) {
+						lives--;
+						xfrog = 610;
+						yfrog = 660;
+						drawLevel(2);
+						drawLevel2Ob();
+						drawCanvas();
+					} else if (yfrog<660 && yfrog >=420) {
+						// frog BURNS IN HOT LAVA >>>:( reset to starting place
+						lives--;
+						//drawImage(frogPtr, 60, 60, xfrog, yfrog); // draw frog in the death place fror a split second
+						//drawCanvas();
+						xfrog = 610;
+						yfrog = 660;
+						drawLevel(2);
+						drawLevel2Ob();
+						drawCanvas();
+					}
+				}
 }
 // /* Draw a pixel */
 // void drawPixel(Pixel *pixel){
@@ -973,8 +1035,9 @@ void quitGame()
 void Game_Read_SNES()
 {
 	moves = 40;
-	lives = 1;		// initializing moves to 40 and lives to 4
+	lives = 4;		// initializing moves to 40 and lives to 4
 	timeLeft = 120;
+	level1 = true;
 
 	gpio = getGPIOPtr(); // get gpio pointer
 
