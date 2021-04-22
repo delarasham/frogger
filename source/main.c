@@ -202,15 +202,15 @@ car[5].x = 1180;
  lilypads[1].x = 0;
 lilypads[2].x = 200;
  lilypads[3].x = 400;
- lilypads[1].y = 240;
+ lilypads[1].y = lilypads[2].y = lilypads[3].y = 240;
  logs[1].x = 0;
      logs[2].x = 350;
      logs[3].x = 650;
- logs[1].y = 180;
+ logs[1].y =logs[2].y=logs[3].y = 180;
      lilypads[4].x = 1200;
  lilypads[5].x = 600;
  lilypads[6].x = 200;
-lilypads[4].y = 120;
+lilypads[4].y=lilypads[5].y=lilypads[6].y = 120;
 turtle[1].x = 980;
 turtle[1].y = 60;
 
@@ -344,7 +344,8 @@ void drawLevel1Ob()
 	}
 
 	drawImage(statsPtr, 300, 60, 0, 0); 
-	xfrog+=frogspeed;
+	if(xfrog+frogspeed<1280-60 && xfrog+frogspeed>60)
+		xfrog+=frogspeed;
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
 }
 
@@ -495,6 +496,7 @@ bool turtleCollision()
 void collisionDetect(){
 	if (level1)
 				{
+					frogspeed=0;
 					//printf("%d %d %d %d",xfrog,car[1].x,yfrog,car[1].y);
 					if (carCollision())
 					{
@@ -504,9 +506,6 @@ void collisionDetect(){
 						drawLevel(1);
 						drawLevel1Ob();
 						drawCanvas();
-					}
-					else if(yfrog>240 && yfrog<60){
-						frogspeed=0;
 					}
 					// collision with lilyads in lane 1
 					if (lilyCollisionr())
@@ -557,8 +556,6 @@ void collisionDetect(){
 						drawLevel(1);
 						drawLevel1Ob();
 						drawCanvas();
-					}else{
-						frogspeed =0;
 					}
 					// something wrong here
 					// else if (yfrog<240 && yfrog>60 && !logCollision() && !lilyCollision() && !turtleCollision()) {
