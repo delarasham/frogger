@@ -91,6 +91,8 @@ short int *rock2Ptr = (short int *)rock2.pixel_data;
 short int *turtlesPtr = (short int *)turtles.pixel_data;
 short int *valuepackPtr = (short int *)valuepack.pixel_data;
 short int *statsPtr = (short int *)stats.pixel_data;
+short int *winPtr = (short int *)winmessage.pixel_data;
+short int *losePtr = (short int *)losemessage.pixel_data;
 
 short int stage[1280 + 1][720 + 1];
 
@@ -787,6 +789,12 @@ int Game_Read_SNES()
 				drawImage(statsPtr, 300, 60, 0, 0);
 				drawCanvas();
 			}
+
+			// checking if game over
+			if (lives == 0) {
+				drawImage();
+			}
+
 			// doing collision detection
 
 			// loop through 60 top 60 pixels of the frog (north border)
@@ -805,7 +813,7 @@ int Game_Read_SNES()
 						drawCanvas();
 					}
 
-					// collision with lilyads in lane 1
+					// collision with lilypads in lane 1
 					if (lilyCollision(i))
 					{
 						// move frog along with the lilypad
@@ -881,7 +889,6 @@ int Game_Read_SNES()
 		}
 		Wait(200000);
 	}
-	// if START is pressed, open the pause menu
 
 }
 
