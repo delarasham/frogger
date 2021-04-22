@@ -96,6 +96,8 @@ void quitGame();
 void resumeMenu();
 void drawDigit();
 void drawMoves();
+void valuePack();
+int randBetween();
 // global variable for the frog's coordinates
 int xfrog, yfrog;
 
@@ -668,6 +670,10 @@ void drawLevel2Ob()
 		pigs[3].x = 1220;
 	}
 	drawImage(statsPtr, 300, 60, 0, 0);
+	drawMoves(moves);
+	drawTime(timeLeft);
+	//drawScore(score);
+	drawLives(lives);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
 	drawImage(frogPtr, 60, 60, xfrog, yfrog);
@@ -696,14 +702,14 @@ void gameOver()
 	drawCanvas();
 	gpio = getGPIOPtr(); // get gpio pointer
 
-	int buttons[17]; // array for the buttons
+	//int buttons[17]; // array for the buttons
 	// initializing 3 GPIO lines
 	Init_GPIO(CLK, 1);
 	Init_GPIO(LAT, 1);
 	Init_GPIO(DAT, 0);
 
 	int pressed = 0;
-	int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
+	//int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
 	buttons[9] = 1; // initialize A as unpressed
 	while (pressed == 0)
 	{
@@ -740,7 +746,7 @@ void gameWon()
 
 	drawImage(winPtr, 500, 500, 390, 110);
 	drawCanvas();
-	int buttons[17]; // array for the buttons
+	//int buttons[17]; // array for the buttons
 	// initializing 3 GPIO lines
 	Init_GPIO(CLK, 1);
 	Init_GPIO(LAT, 1);
