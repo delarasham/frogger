@@ -70,8 +70,8 @@ void drawPixel(Pixel *pixel);
 int xfrog, yfrog; 
 
 // variable for the number of moves and lives
-int moves, lives, timeLeft;
-float timeElapsed = 0;
+int moves, lives, timeLeft, score;
+double timeElapsed;
 bool level1 = true;
 int frogspeed =0;
 // global pointers for each image to draw
@@ -461,21 +461,20 @@ void gameWon() {
 // and returning TRUE if a collision has occured between frog and specified obstacle.
 // separate functions are required for each obstacle due to uniqe shape and location.
 
-bool carCollision()
+bool carCollision(int i)
 {
 	return ((( xfrog<car[1].x+100 && xfrog+60>car[1].x ) && ( yfrog<car[1].y+60 && yfrog+60>car[1].y ) )) || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
 		    ((( xfrog<car[2].x+100 && xfrog+60>car[2].x ) && ( yfrog<car[2].y+60 && yfrog+60>car[2].y ) )) || // same thing with car2
 		   //secondCar2x + 100 == xfrog+i && car[2].y == yfrog || secondCar2x == xfrog+i && car[2].y == yfrog || // and so on...
-		    ((( xfrog<car[3].x+100 && xfrog+60>car[3].x ) && ( yfrog<car[3].y+60 && yfrog+60>car[3].y ) )) ||
-		    ((( xfrog<car[4].x+180 && xfrog+60>car[4].x ) && ( yfrog<car[4].y+60 && yfrog+60>car[4].y ) )) ||
-		    ((( xfrog<car[5].x+100 && xfrog+60>car[5].x ) && ( yfrog<car[5].y+60 && yfrog+60>car[5].y ) ));
+		   (car[3].x + 100 == xfrog + i && car[3].y == yfrog) || (car[3].x == xfrog + i && car[3].y == yfrog) ||
+		   (car[4].x + 180 == xfrog + i && car[4].y == yfrog) || (car[4].x == xfrog + i && car[4].y == yfrog) ||
+		   (car[5].x + 100 == xfrog + i && car[5].y == yfrog) || (car[5].x == xfrog + i && car[5].y == yfrog);
 }
-bool logCollision()
+bool logCollision(int i)
 {
-	return ((( xfrog<logs[1].x+240 && xfrog+60>logs[1].x ) && ( yfrog<logs[1].y+60 && yfrog+60>logs[1].y ) )) || // if top right pixel or top left pixel of car hits frog north border && y coord of car and frog are same
-		    ((( xfrog<logs[2].x+240 && xfrog+60>logs[2].x ) && ( yfrog<logs[2].y+60 && yfrog+60>logs[2].y ) )) || // same thing with car2
-		   //secondCar2x + 100 == xfrog+i && car[2].y == yfrog || secondCar2x == xfrog+i && car[2].y == yfrog || // and so on...
-		   ((( xfrog<logs[3].x+240 && xfrog+60>logs[3].x ) && ( yfrog<logs[3].y+60 && yfrog+60>logs[3].y ) )) ;
+	return logs[1].x + 30 == xfrog + i && logs[1].y == yfrog || logs[1].x + 90 == xfrog + i && logs[1].y == yfrog || logs[1].x + 150 == xfrog + i && logs[1].y == yfrog || logs[1].x + 210 == xfrog + i && logs[1].y == yfrog ||
+		   logs[2].x + 30 == xfrog + i && logs[1].y == yfrog || logs[2].x + 90 == xfrog + i && logs[1].y == yfrog || logs[2].x + 150 == xfrog + i && logs[1].y == yfrog || logs[2].x + 210 == xfrog + i && logs[1].y == yfrog ||
+		   logs[3].x + 30 == xfrog + i && logs[1].y == yfrog || logs[3].x + 90 == xfrog + i && logs[1].y == yfrog || logs[3].x + 150 == xfrog + i && logs[1].y == yfrog || logs[3].x + 210 == xfrog + i && logs[1].y == yfrog;
 }
 bool lilyCollisionr()
 {
@@ -489,9 +488,13 @@ bool lilyCollisionl()
 		   ((( xfrog<lilypads[5].x+80 && xfrog+60>lilypads[5].x ) && ( yfrog<lilypads[5].y+60 && yfrog+60>lilypads[5].y ) ))||
 		   ((( xfrog<lilypads[6].x+80 && xfrog+60>lilypads[6].x ) && ( yfrog<lilypads[6].y+60 && yfrog+60>lilypads[6].y ) ));
 }
-bool turtleCollision()
+bool turtleCollision(int i)
 {
-	return ((( xfrog<turtle[1].x+300&& xfrog+60>turtle[1].x ) && ( yfrog<turtle[1].y+60 && yfrog+60>turtle[1].y ) ));
+	return turtle[1].x + 30 == xfrog + i && turtle[1].y == yfrog ||
+		   turtle[1].x + 90 == xfrog + i && turtle[1].y == yfrog ||
+		   turtle[1].x + 150 == xfrog + i && turtle[1].y == yfrog ||
+		   turtle[1].x + 210 == xfrog + i && turtle[1].y == yfrog ||
+		   turtle[1].x + 270 == xfrog + i && turtle[1].y == yfrog;
 }
 void collisionDetect(){
 	if (level1)
@@ -862,7 +865,6 @@ void InterpretButtons(int i)
 // Game_Read_SNES used to read SNES controller input while in the main game state
 int Game_Read_SNES()
 {
-	clock_t start = clock();
 
 	gpio = getGPIOPtr(); // get gpio pointer
 
@@ -874,7 +876,7 @@ int Game_Read_SNES()
 
 	int pressed = 0;
 
-	// initial coordinate locations for all the obstacles in leve1_2
+	// initial coordinate locations for all the obstacles in leve1_2 and 3_4
 	initOb();
 
 	buttons[4] = 1; // initialize START as unpressed
@@ -883,6 +885,8 @@ int Game_Read_SNES()
 		pressed = 0;
 		while (pressed == 0)
 		{
+			clock_t start = clock(); // start time for the loop here
+
 			// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
 			Write_Clock(1);
 			Write_Latch(1);
@@ -902,29 +906,32 @@ int Game_Read_SNES()
 				drawImage(statsPtr, 300, 60, 0, 0);
 				drawCanvas();
 			}
-
+			
+			// updating the time
+			
 			clock_t end = clock();
-			float timeOfLoop = (float) ((end-start)/CLOCKS_PER_SEC);
-			timeElapsed += timeOfLoop;
-			if (timeElapsed == 1) { // if a full second goes by
-				timeLeft -= 1; // time left - time elapsed
+			double loopTime = (double)(end - start);
+			timeElapsed += loopTime/CLOCKS_PER_SEC;
+			if (timeElapsed >= 1) {
+				timeLeft --;
 				timeElapsed = 0;
 			}
 
 			// checking if game over
-			if (lives == 0 || moves == 0 ) { //|| timeLeft == 0) {
+			if (lives == 0 || moves == 0 || timeLeft == 0) {
 				gameOver();
 			}
 
 			// checking if game won
-			if (yfrog == 0 && level1 == FALSE) {
+			if (yfrog == 0 && !level1) {
 				gameWon();
 			}
 
 			// doing collision detection
 			collisionDetect();
 			// loop through 60 top 60 pixels of the frog (north border)
-			
+			for (int i = 0; i < 60; i++)
+			{
 				// checking collissions for all cars in level 1
 				
 
@@ -945,11 +952,10 @@ int Game_Read_SNES()
 				Write_Clock(1);
 			}
 		}
-		Wait(200000);
+		Wait(50000);
 	}
 
 }
-
 
 
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
@@ -964,8 +970,8 @@ int main()
 {
 
 	moves = 40;
-	lives = 4;		// initializing moves to 40 and lives to 4
-	timeLeft = 10; // given 120 seconds
+	lives = 1;		// initializing moves to 40 and lives to 4
+	timeLeft = 120; // given 120 seconds
 
 	// put this somewhere in the thread, right before you display the time:
 	/*
