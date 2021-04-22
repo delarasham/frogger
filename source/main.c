@@ -74,6 +74,7 @@ int moves, lives, timeLeft, score;
 double timeElapsed;
 bool level1 = true;
 int frogspeed = 0;
+int buttons[17];
 // global pointers for each image to draw
 short int *titlePtr = (short int *)title.pixel_data;
 short int *level1_2Ptr = (short int *)level1_2.pixel_data;
@@ -157,6 +158,30 @@ void Wait(int s)
 	delayMicroseconds(s);
 }
 
+void Read_SNES(){
+	gpio = getGPIOPtr();
+	Init_GPIO(CLK,1);
+	Init_GPIO(LAT,1);
+	Init_GPIO(DAT,0);
+	// pressed is zero if no button is pressed
+	int pressed = 0;
+	//buttons[4]=1;		// initialize START as unpressed
+	for(int i=1;i<=12;i++){
+		buttons[i]=1;
+	}
+		Write_Clock(1);
+		Write_Latch(1);
+		Wait(12);
+		Write_Latch(0);
+		for (int i=1;i<=16;i++){	// loop through each button
+        		Wait(6);
+        		Write_Clock(0);
+        		Wait(6);
+        		int b =Read_Data();
+        		buttons[i] =b;
+        		Write_Clock(1);
+        	}
+}
 // drawCanvas loads and displays to the framebuffer and entire instance or frame of the game.
 void drawCanvas()
 {
@@ -892,7 +917,8 @@ void InterpretButtons(int i)
 	switch (i)
 	{
 	case 4:
-		printf("Program is terminating...\n"); // pressing START opens pause menu
+		resumeMenu();
+		printf("Goes here\n");
 		break;
 	case 5:
 		printf("You have pressed Joy-pad UP\n"); // go 60 px up
@@ -1119,7 +1145,13 @@ void Game_Read_SNES()
 					buttons[i] = b;
 
 					if (b == 0)
-					{						 // if the button is pressed
+					{	
+						if(i==4){
+							printf("AAAAAAAAAAA\n");
+							//resumeMenu();
+							buttons[4]=1;
+						}
+											 // if the button is pressed
 						InterpretButtons(i); // call interpretButtons to update the screen based on what button is pressed
 						pressed = 1;
 						break;
@@ -1130,6 +1162,60 @@ void Game_Read_SNES()
 			Wait(50000);
 		}
 	}
+}
+void resumeMenu(){
+	drawImage(pausemenuPtr, 500, 500, 390, 110); // drawing the title
+	drawImage(frogPtr, 60, 60, 400, 330); // drawing frog icon to be used as a cursor
+	drawCanvas();
+	buttons[9]=1;
+	int cursor=0;
+	while (buttons[9] == 1)
+	{ // while A is not pressed
+		int pressed = 0;
+		
+		
+		while (pressed == 0)
+		{
+			Read_SNES();
+			for(int i=1;i<=12;i++){
+				if(buttons[i]==0){
+					switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
+					{
+
+					// UP
+					case 5:
+						drawImage(pausemenuPtr, 500, 500, 390, 110);
+						drawImage(frogPtr, 60, 60, 400, 340);
+						drawCanvas();
+						cursor = 0;
+						break;
+
+					// DOWN
+					case 6:
+						drawImage(pausemenuPtr, 500, 500, 390, 110);
+						drawImage(frogPtr, 60, 60, 400, 390);
+						drawCanvas();
+						cursor = 1;
+						break;
+
+					// A
+					case 9:
+						printf("You have pressed A\n");
+						break;
+					}
+					pressed = 1;
+					break;
+				}
+			}
+
+		}
+		Wait(200000);
+	}
+	if (cursor == 1)
+	{
+		quitGame();
+	}
+
 }
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
 // returns a number between mina nd max, for random location of value pack.
