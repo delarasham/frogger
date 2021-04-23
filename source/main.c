@@ -279,7 +279,7 @@ struct Car
 {
 	int x;
 	int y;
-} car[6];
+} car[15];
 struct Lilypad
 {
 	int x;
@@ -316,16 +316,26 @@ void initOb()
 {
 
 	car[1].x = 1180;
-	car[1].y = 600;
+	car[1].y = car[6].y = car[7].y = 600 ;
 	car[2].x = 0;
 	//int secondCar2x = 500;
-	car[2].y = 540;
+	car[2].y = car[8].y = car[9].y = 540;
 	car[3].x = 200;
-	car[3].y = 480;
+	car[3].y = car[10].y=car[11].y=480 ;
 	car[4].x = 350;
-	car[4].y = 420;
+	car[4].y =car[12].y= 420;
 	car[5].x = 1000;
-	car[5].y = 360;
+	car[5].y = car[13].y = car[14].y =360;
+
+	car[6].x = 800;
+	car[7].x = 300;
+	car[8].x = 500;
+	car[9].x = 1000;
+	car[10].x = 600;
+	car[11].x = 1100;
+	car[12].x = 850;
+	car[13].x=200;
+	car[14].x=550;
 
 	lilypads[1].x = 0;
 	lilypads[2].x = 200;
@@ -460,17 +470,41 @@ void drawLives(int i){
 void drawLevel1Ob()
 {
 	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y); // drawing car #1
-	car[1].x = car[1].x - 7;						 // animating the car, moves from right to left at a speed of 3.
+	drawImage(car1Ptr, 100, 60, car[6].x, car[6].y);
+	drawImage(car1Ptr, 100, 60, car[7].x, car[7].y);
+	car[1].x -= 7;						 // animating the car, moves from right to left at a speed of 3.
+	car[6].x -= 7;
+	car[7].x -= 7;
 	if (car[1].x < -100)								 // checking edge case, when car reaches the end of screen
 	{
 		car[1].x = 1280;
 	}
+	if (car[6].x < -100)								 // checking edge case, when car reaches the end of screen
+	{
+		car[6].x = 1280;
+	}
+	if (car[7].x < -100)								 // checking edge case, when car reaches the end of screen
+	{
+		car[7].x = 1280;
+	}
 	// repeating with all other obstacles
 	drawImage(car2Ptr, 100, 60, car[2].x, car[2].y);
+	drawImage(car2Ptr, 100, 60, car[8].x, car[8].y);
+	drawImage(car2Ptr, 100, 60, car[9].x, car[9].y);
 	car[2].x = car[2].x + 5;
+	car[8].x = car[8].x + 5;
+	car[9].x = car[9].x + 5;
 	if (car[2].x > 1280)
 	{
 		car[2].x = -100;
+	}
+	if (car[8].x > 1280)
+	{
+		car[8].x = -100;
+	}
+	if (car[9].x > 1280)
+	{
+		car[9].x = -100;
 	}
 	// drawImage(car2Ptr, 100, 60, secondCar2x, car[2].y); // drawing a second car in lane 2
 	// secondCar2x += 15;
@@ -478,23 +512,48 @@ void drawLevel1Ob()
 	// 	secondCar2x = 0;
 	// }
 	drawImage(car3Ptr, 100, 60, car[3].x, car[3].y);
+	drawImage(car3Ptr, 100, 60, car[10].x, car[10].y);
+	drawImage(car3Ptr, 100, 60, car[11].x, car[11].y);
 	//drawImage(car3Ptr, 100, 60, car[3].x-200, car[3].y);
-	car[3].x = car[3].x - 10;
+	car[3].x = car[3].x - 10;car[10].x = car[10].x - 10;car[11].x = car[11].x - 10;
 	if (car[3].x < -100)
 	{
 		car[3].x = 1280;
 	}
+	if (car[10].x < -100)
+	{
+		car[10].x = 1280;
+	}
+	if (car[11].x < -100)
+	{
+		car[11].x = 1280;
+	}
 	drawImage(car4Ptr, 180, 60, car[4].x, car[4].y);
-	car[4].x = car[4].x - 7;
+	drawImage(car4Ptr, 180, 60, car[12].x, car[12].y);
+	car[4].x = car[4].x - 7;car[12].x = car[12].x - 7;
 	if (car[4].x < -180)
 	{
 		car[4].x = 1280;
 	}
+	if (car[12].x < -180)
+	{
+		car[12].x = 1280;
+	}
 	drawImage(car1Ptr, 100, 60, car[5].x, car[5].y);
-	car[5].x = car[5].x - 6;
+	drawImage(car1Ptr, 100, 60, car[13].x, car[13].y);
+	drawImage(car1Ptr, 100, 60, car[14].x, car[14].y);
+	car[5].x = car[5].x - 6;car[13].x = car[13].x - 6;car[14].x = car[14].x - 6;
 	if (car[5].x < -100)
 	{
 		car[5].x = 1280;
+	}
+	if (car[13].x < -100)
+	{
+		car[13].x = 1280;
+	}
+	if (car[14].x < -100)
+	{
+		car[14].x = 1280;
 	}
 	drawImage(lilypadPtr, 80, 60, lilypads[1].x, lilypads[1].y); // drawing 3 lilypadss in lane 1
 	lilypads[1].x += 10;
@@ -807,7 +866,16 @@ bool carCollision()
 																														//secondCar2x + 100 == xfrog+i && car[2].y == yfrog || secondCar2x == xfrog+i && car[2].y == yfrog || // and so on...
 		   (((xfrog < car[3].x + 100 && xfrog + 60 > car[3].x) && (yfrog < car[3].y + 60 && yfrog + 60 > car[3].y))) ||
 		   (((xfrog < car[4].x + 180 && xfrog + 60 > car[4].x) && (yfrog < car[4].y + 60 && yfrog + 60 > car[4].y))) ||
-		   (((xfrog < car[5].x + 100 && xfrog + 60 > car[5].x) && (yfrog < car[5].y + 60 && yfrog + 60 > car[5].y)));
+		   (((xfrog < car[5].x + 100 && xfrog + 60 > car[5].x) && (yfrog < car[5].y + 60 && yfrog + 60 > car[5].y)))||
+		   (((xfrog < car[6].x + 100 && xfrog + 60 > car[6].x) && (yfrog < car[6].y + 60 && yfrog + 60 > car[6].y)))||
+		   (((xfrog < car[7].x + 100 && xfrog + 60 > car[7].x) && (yfrog < car[7].y + 60 && yfrog + 60 > car[7].y)))||
+		   (((xfrog < car[8].x + 100 && xfrog + 60 > car[8].x) && (yfrog < car[8].y + 60 && yfrog + 60 > car[8].y)))||
+		   (((xfrog < car[9].x + 100 && xfrog + 60 > car[9].x) && (yfrog < car[9].y + 60 && yfrog + 60 > car[9].y)))||
+		    (((xfrog < car[10].x + 100 && xfrog + 60 > car[10].x) && (yfrog < car[10].y + 60 && yfrog + 60 > car[10].y)))||
+			 (((xfrog < car[11].x + 100 && xfrog + 60 > car[11].x) && (yfrog < car[11].y + 60 && yfrog + 60 > car[11].y)))||
+			 (((xfrog < car[12].x + 180 && xfrog + 60 > car[12].x) && (yfrog < car[12].y + 60 && yfrog + 60 > car[12].y)))||
+			 (((xfrog < car[13].x + 100 && xfrog + 60 > car[13].x) && (yfrog < car[13].y + 60 && yfrog + 60 > car[13].y)))||
+			 (((xfrog < car[14].x + 100 && xfrog + 60 > car[14].x) && (yfrog < car[14].y + 60 && yfrog + 60 > car[14].y)));
 }
 bool logCollision()
 {
@@ -1287,7 +1355,8 @@ void Game_Read_SNES()
 	lives = 4; // initializing moves to 40 and lives to 4
 	timeLeft = 120;
 	level1 = true;
-
+	xfrog = 610;
+	yfrog= 660;
 	// gpio = getGPIOPtr(); // get gpio pointer
 
 	// //int buttons[17]; // array for the buttons
