@@ -87,6 +87,8 @@ typedef struct
 } Pixel;
 
 struct fbs framebufferstruct;
+
+// function summaries
 void drawPixel(Pixel *pixel);
 void gameOver();
 void Game_Read_SNES();
@@ -98,6 +100,7 @@ void drawDigit();
 void drawMoves();
 void valuePack();
 int randBetween();
+
 // global variable for the frog's coordinates
 int xfrog, yfrog;
 
@@ -109,7 +112,8 @@ bool level1 = true;
 int frogspeed = 0;
 int buttons[17];
 
-int xvaluepack; // coord location for value pack
+// coord location for value pack
+int xvaluepack; 
 int yvaluepack;
 
 // global pointers for each image to draw
@@ -136,6 +140,7 @@ short int *winPtr = (short int *)winmessage.pixel_data;
 short int *losePtr = (short int *)losemessage.pixel_data;
 
 short int stage[1280 + 1][720 + 1];
+
 // functions borrowed from project part 1 below
 
 // Init_GPIO initializes a GPIO line using the INP_GPIO and OUT_GPIO functions.
@@ -195,6 +200,9 @@ void Wait(int s)
 	delayMicroseconds(s);
 }
 
+
+// Read_SNES() is a general function to read inputs (buttons pressed on the SNES controller). 
+// this function is referenced from project part 1 code
 void Read_SNES()
 {
 	gpio = getGPIOPtr();
@@ -222,6 +230,7 @@ void Read_SNES()
 		Write_Clock(1);
 	}
 }
+
 // drawCanvas loads and displays to the framebuffer and entire instance or frame of the game.
 void drawCanvas()
 {
@@ -241,7 +250,7 @@ void drawCanvas()
 
 // drawImage draws a specific image defined by the imagePtr, with a specific width and length, at a specific location
 // on the screen (xstart, ystart) is the location of the top left pixel of the image.
-// part of the code is taken from drawImage.c example on D2L
+// part of the code is referenced from drawImage.c example on D2L
 void drawImage(short int *imagePtr, int width, int length, int xstart, int ystart)
 {
 
@@ -311,7 +320,7 @@ struct pig
 	int y;
 } pigs[4];
 
-// initOOb initializes all the coordinates of the object to specific pixel locations on the screen.
+// initOb initializes all the coordinates of the object to specific pixel locations on the screen.
 void initOb()
 {
 
@@ -371,10 +380,12 @@ void initOb()
 	pigs[2].y = pigs[3].y = 60;
 }
 
+//drawDigit() prints out the numerical digits frepresenting the number of lives, moves, time, and score
+// to be displayed on the stats bar in the top left corner.
 void drawDigit(int i,int x, int y){
-	switch (i){
+	switch (i){ // use a switch case for all 10 cases/digits
 		case 0:
-		drawImage(n0Ptr,20,30,x,y);
+		drawImage(n0Ptr,20,30,x,y); // draw the number in the appropriate location (x,y)
 		break;
 		case 1:
 		drawImage(n1Ptr,20,30,x,y);
@@ -386,7 +397,7 @@ void drawDigit(int i,int x, int y){
 		drawImage(n3Ptr,20,30,x,y);
                 break;
 		case 4:
-		drawImage(n4Ptr,20,30,x,y);	// if START is pressed, program ends
+		drawImage(n4Ptr,20,30,x,y);
                 break;
 		case 5:
 		drawImage(n5Ptr,20,30,x,y);
@@ -405,16 +416,20 @@ void drawDigit(int i,int x, int y){
                 break;
 	}
 }
+
+// drawMoves takes the int number of moves left and calls drawDigit to display it onto the stats bar.
 void drawMoves(int i){
 	if( i<10){
-		drawDigit(i,280,0);
+		drawDigit(i,280,0); // draw a single digit
 	}else{
-		int a = i/10;
+		int a = i/10; // draw 2 digit numbers
 		int b = i%10;
 		drawDigit(a,260,0);
 		drawDigit(b,280,0);
 	}
 }
+
+// drawTime takes the int number of seconds left and calls drawDigit to display it onto the stats bar.
 void drawTime(int i){
 	if( i<10){
 		drawDigit(i,135,0);
@@ -424,7 +439,7 @@ void drawTime(int i){
 		drawDigit(a,115,0);
 		drawDigit(b,135,0);
 	}
-	else{
+	else{ // logic for drawing 3 digit numbers
 		int a = i%10;
 		int temp = i/10;
 		int b = temp%10;
@@ -434,8 +449,10 @@ void drawTime(int i){
 		drawDigit(c,95,0);
 	}
 }
+
+// drawScore takes the int number of moves left and calls drawDigit to display it onto the stats bar.
 void drawScore(int i){
-	if( i<10){
+	if( i<10){ // similar procedure as previous function
 		drawDigit(i,135,30);
 	}else if(i<100){
 		int a = i/10;
@@ -456,12 +473,13 @@ void drawScore(int i){
 void drawLives(int i){
 	drawDigit(i,280,30);
 }
-// drawLevel1Ob uses drawImage and draws all the obstacles in level 1 (road with cars, water).
+
+// drawLevel1Ob uses drawImage and drawCanvass to draw all the required obstacles in level 1 (road with cars, water).
 void drawLevel1Ob()
 {
 	drawImage(car1Ptr, 100, 60, car[1].x, car[1].y); // drawing car #1
-	car[1].x = car[1].x - 7;						 // animating the car, moves from right to left at a speed of 3.
-	if (car[1].x < -100)								 // checking edge case, when car reaches the end of screen
+	car[1].x = car[1].x - 7;						 // animating the car, moves from right to left at a speed of 7.
+	if (car[1].x < -100)							 // checking edge case, when car reaches the end of screen
 	{
 		car[1].x = 1280;
 	}
@@ -693,112 +711,61 @@ void drawLevel(int l)
 		drawImage(level3_4Ptr, 1280, 720, 0, 0);
 	}
 }
+
+// gameOver() handles the game logic in the event that the game ends (run out of lives, time or moves).
 void gameOver()
 {
 	timePassed = 0;
-	score = 2*(lives+moves+timeLeft);
+	score = 2*(lives+moves+timeLeft); // calculating the final score 
 
-	drawImage(losePtr, 500, 500, 390, 110);
+	drawImage(losePtr, 500, 500, 390, 110); // printing the game over message
 	drawCanvas();
-	// gpio = getGPIOPtr(); // get gpio pointer
-
-	// //int buttons[17]; // array for the buttons
-	// // initializing 3 GPIO lines
-	// Init_GPIO(CLK, 1);
-	// Init_GPIO(LAT, 1);
-	// Init_GPIO(DAT, 0);
 
 	int pressed = 0;
-	//int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
+	
 	buttons[9] = 1; // initialize A as unpressed
 	while (pressed == 0)
 	{
-		// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
-		// Write_Clock(1);
-		// Write_Latch(1);
-		// Wait(12);
-		// Write_Latch(0);
-
-		// for (int i = 1; i <= 16; i++)
-		// { // loop through each button
-		// 	Wait(6);
-		// 	Write_Clock(0);
-		// 	Wait(6);
-		// 	int b = Read_Data();
-		// 	//buttons[i] = b;
-
-		// 	if (b == 0)
-		// 	{
-		// 		pressed = 1;
-		// 		break;
-		// 	}
-		// 	Write_Clock(1);
-		// }
 		Read_SNES();
 		for(int i=1;i<=12;i++){
 			if(buttons[i]==0){
-				pressed =1;
+				pressed =1; // press any button
 				break;
 			}
 		}
 	}
 	Wait(100000);
-	Menu_Read_SNES();
+	Menu_Read_SNES(); // return to main menu
 }
 
+// gameWon() handles logic when the player wins the game (reaches the end of teh 4 lvls).
 void gameWon()
 {
 	timePassed = 0;
-	score = 2*(lives+moves+timeLeft);
+	score = 2*(lives+moves+timeLeft); // calc final score
 
-	drawImage(winPtr, 500, 500, 390, 110);
+	drawImage(winPtr, 500, 500, 390, 110); // print win message
 	drawCanvas();
-	//int buttons[17]; // array for the buttons
-	// // initializing 3 GPIO lines
-	// Init_GPIO(CLK, 1);
-	// Init_GPIO(LAT, 1);
-	// Init_GPIO(DAT, 0);
 
 	int pressed = 0;
-	//int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
-	//buttons[9] = 1; // initialize A as unpressed
 	while (pressed == 0)
 	{
-		// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
-		// Write_Clock(1);
-		// Write_Latch(1);
-		// Wait(12);
-		// Write_Latch(0);
-
-		// for (int i = 1; i <= 16; i++)
-		// { // loop through each button
-		// 	Wait(6);
-		// 	Write_Clock(0);
-		// 	Wait(6);
-		// 	int b = Read_Data();
-		// 	//buttons[i] = b;
-
-		// 	if (b == 0)
-		// 	{
-		// 		pressed = 1;
-		// 		break;
-		// 	}
-		// 	Write_Clock(1);
-		// }
 		Read_SNES();
 		for(int i=1;i<=12;i++){
-			if(buttons[i]==0){
-				pressed =1;
+			if(buttons[i]==0){ 
+				pressed =1; // press any button
 				break;
 			}
 		}
 	}
 	Wait(100000);
-	Menu_Read_SNES();
+	Menu_Read_SNES(); // return to main menu
 }
+
 // collision functions: take an integer input i representing a pixel location fromt he frog character
 // and returning TRUE if a collision has occured between frog and specified obstacle.
 // separate functions are required for each obstacle due to uniqe shape and location.
+// objects moving left and right are in separate function to facilitate CollisionDetect.
 
 bool carCollision()
 {
@@ -842,7 +809,6 @@ bool cowPigCollision()
 		   ((xfrog < pigs[2].x + 60 && xfrog + 60 > pigs[2].x) && (yfrog < pigs[2].y + 60 && yfrog + 60 > pigs[2].y)) ||
 		   ((xfrog < pigs[3].x + 60 && xfrog + 60 > pigs[3].x) && (yfrog < pigs[3].y + 60 && yfrog + 60 > pigs[3].y));
 }
-
 bool rockCollisionl() // 3 4 6 7
 {
 	return ((xfrog < rock[3].x + 180 && xfrog + 60 > rock[3].x) && (yfrog < rock[3].y + 60 && yfrog + 60 > rock[3].y)) ||
@@ -850,7 +816,6 @@ bool rockCollisionl() // 3 4 6 7
 		   ((xfrog < rock[6].x + 120 && xfrog + 60 > rock[6].x) && (yfrog < rock[6].y + 60 && yfrog + 60 > rock[6].y)) ||
 		   ((xfrog < rock[7].x + 120 && xfrog + 60 > rock[7].x) && (yfrog < rock[7].y + 60 && yfrog + 60 > rock[7].y));
 }
-
 bool rockCollisionr() // 1 2 5 8 9
 {
 	return ((xfrog < rock[1].x + 120 && xfrog + 60 > rock[1].x) && (yfrog < rock[1].y + 60 && yfrog + 60 > rock[1].y)) ||
@@ -859,17 +824,19 @@ bool rockCollisionr() // 1 2 5 8 9
 		   ((xfrog < rock[8].x + 180 && xfrog + 60 > rock[8].x) && (yfrog < rock[8].y + 60 && yfrog + 60 > rock[8].y)) ||
 		   ((xfrog < rock[9].x + 180 && xfrog + 60 > rock[9].x) && (yfrog < rock[9].y + 60 && yfrog + 60 > rock[9].y));
 }
-
 bool valuePackCollision() {
 	return  ((xfrog < xvaluepack + 60 && xfrog + 60 > xvaluepack) && (yfrog < yvaluepack + 60 && yfrog + 60 > yvaluepack));
 }
 
+// collisionDetect checks each of the above collision functions and executes movement of the frog along with the object (logs, lilypads, rocks, etc)
+// or resets frog location and decrements lives (cars, animals).
+// also handles when the frog collides with teh value pack.
 void collisionDetect()
 {
 	if (valuePackCollision()) {
 		timePassed = 0;
 		lives++; // value pack adds a life
-		xvaluepack = randBetween(0, 1220); // new coordinates for valuepack next time
+		xvaluepack = randBetween(0, 1220); // new coordinates for valuepack for next time
 		yvaluepack = randBetween(0, 660);
 	
 		if (level1) {
@@ -881,14 +848,14 @@ void collisionDetect()
 		}
 	}
 
-	if (level1)
+	if (level1) 
 	{
-		frogspeed = 0;
-		//printf("%d %d %d %d",xfrog,car[1].x,yfrog,car[1].y);
-		if (carCollision())
+		frogspeed = 0; // frogspeed = the per pixel movement of the frog
+		if (carCollision()) // if frog collide with car
 		{
-			lives--;
-			xfrog = 610;
+			// reset frog location and decrement lives
+			lives--; 
+			xfrog = 610; 
 			yfrog = 660;
 			drawLevel(1);
 			drawLevel1Ob();
@@ -898,48 +865,33 @@ void collisionDetect()
 		// collision with lilyads in lane 1
 		if (lilyCollisionr())
 		{
-			// move frog along with the lilypad
-			//drawCanvas();
-			//xfrog += 10;
 			frogspeed = 10;
-			//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 
-			// collision with logs lane 2
-			// check if frog north border collides with any 1 of 4 pixels evenly spread out on the log
+		// collision with logs lane 2
 		}
 		else if (logCollision())
 		{
-			// move frog along with the lilypad
-			//drawCanvas();
-			//xfrog += 8;
 			frogspeed = 8;
-			//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 
-			// collisions with lilypads in lane 3
+		// collisions with lilypads in lane 3
 		}
 		else if (lilyCollisionl())
 		{
-			// move frog along with the lilypad
-			// drawCanvas();
-			//xfrog -= 6;
 			frogspeed = -6;
 			drawLevel(1);
 			drawLevel1Ob();
 			drawCanvas();
 
-			// collisions with turtles (any 1 of 5 pixels)
+		// collisions with turtles
 		}
 		else if (turtleCollision())
 		{
-			// move frog along with the lilypad
-			//drawCanvas();
-			//xfrog -= 12;
 			frogspeed = -12;
 			drawLevel(1);
 			drawLevel1Ob();
@@ -960,7 +912,7 @@ void collisionDetect()
 	}
 	else // level 3 4 obstacles
 	{
-		frogspeed = 0;
+		frogspeed = 0; // same procedure as first if statement
 		if (rockCollisionl())
 		{
 			frogspeed = -6;
@@ -988,8 +940,6 @@ void collisionDetect()
 		{
 			// frog BURNS IN HOT LAVA >>>:( reset to starting place
 			lives--;
-			//drawImage(frogPtr, 60, 60, xfrog, yfrog); // draw frog in the death place fror a split second
-			//drawCanvas();
 			xfrog = 610;
 			yfrog = 660;
 			drawLevel(2);
@@ -998,33 +948,15 @@ void collisionDetect()
 		}
 	}
 }
-// /* Draw a pixel */
-// void drawPixel(Pixel *pixel){
-// 	long int location =(pixel->x +framebufferstruct.xOff) * (framebufferstruct.bits/8) +
-//                        (pixel->y+framebufferstruct.yOff) * framebufferstruct.lineLength;
-// 	 *((unsigned short int*)(framebufferstruct.fptr + location)) = pixel->color;
-// 	 //printf("%d",pixel -> color);
 
-// 	// long int location =(pixel->x+framebufferstruct.xOff)* (framebufferstruct.bits/8) +
-//     //                    (pixel->y+framebufferstruct.yOff)  * framebufferstruct.lineLength;
-// 	//  *((unsigned short int*)stage + location) = pixel->color;
-
-// }
 
 // Menu_Read_SNES used to read SNES inputs while on the main menu
-// returns int cursor, which tells which optiont he frog is on when A is pressed.
+// returns int cursor, which tells which option the player is on when A is pressed.
 void Menu_Read_SNES()
 {
 	drawImage(titlePtr, 1280, 720, 0, 0); // drawing the title
 	drawImage(frogPtr, 60, 60, 300, 450); // drawing frog icon to be used as a cursor
 	drawCanvas();
-	// gpio = getGPIOPtr(); // get gpio pointer
-
-	// int buttons[17]; // array for the buttons
-	// // initializing 3 GPIO lines
-	// Init_GPIO(CLK, 1);
-	// Init_GPIO(LAT, 1);
-	// Init_GPIO(DAT, 0);
 
 	int pressed = 0;
 	int cursor;		// variable indicating the location of the cursor (0 means on START GAME, 1 means on QUIT GAME)
@@ -1038,7 +970,7 @@ void Menu_Read_SNES()
 			Read_SNES();
 			for(int i=1;i<12;i++){
 				if (buttons[i] ==0){
-					switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
+					switch (i) // switch cases covering if joypad UP, DOWN or A is pressed.
 					{
 
 					// UP
@@ -1066,90 +998,40 @@ void Menu_Read_SNES()
 					break;
 				}
 			}
-			// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
-			// Write_Clock(1);
-			// Write_Latch(1);
-			// Wait(12);
-			// Write_Latch(0);
-
-			// for (int i = 1; i <= 16; i++)
-			// { // loop through each button
-			// 	Wait(6);
-			// 	Write_Clock(0);
-			// 	Wait(6);
-			// 	int b = Read_Data();
-			// 	buttons[i] = b;
-
-			// 	if (b == 0)
-			// 	{ // if the button is pressed
-
-			// 		switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
-			// 		{
-
-			// 		// UP
-			// 		case 5:
-			// 			drawImage(titlePtr, 1280, 720, 0, 0);
-			// 			drawImage(frogPtr, 60, 60, 300, 450);
-			// 			drawCanvas();
-			// 			cursor = 0;
-			// 			break;
-
-			// 		// DOWN
-			// 		case 6:
-			// 			drawImage(titlePtr, 1280, 720, 0, 0);
-			// 			drawImage(frogPtr, 60, 60, 300, 530);
-			// 			drawCanvas();
-			// 			cursor = 1;
-			// 			break;
-
-			// 		// A
-			// 		case 9:
-			// 			//printf("You have pressed A\n");
-			// 			break;
-			// 		}
-			// 		pressed = 1;
-			// 		break;
-			// 	}
-			// 	Write_Clock(1);
-			// }
 		}
-		Wait(100000);
+		Wait(100000); // adding delay so buttons arent registered more than once
 	}
-	if (cursor == 1)
+	if (cursor == 1) // if on EXIT GAME
 	{
-		quitGame();
+		quitGame(); // exit the game
 	}
-	else
+	else // else, starting the level
 	{
-		// else, starting the level
-
 		drawImage(level1_2Ptr, 1280, 720, 0, 0); // drawing the level background
 		drawImage(frogPtr, 60, 60, 610, 660);	 // drawing frog icon in center of the level
 		drawCanvas();
 		xfrog = 610; // init variables for starting place coordinates of frog
 		yfrog = 660;
 
-		Game_Read_SNES();
+		Game_Read_SNES(); // call game read 
 	}
 }
 
 // function to update frog position on display when joypad buttons are pressed in the game state.
 void InterpretButtons(int i)
 {
-
-	switch (i)
+	switch (i) // switch case for start, joypad, and a
 	{
 	case 4:
-		resumeMenu();
-		//printf("Goes here\n");
+		resumeMenu(); // if START button is pressed, open the resume menu
 		break;
-	case 5:
-		//printf("You have pressed Joy-pad UP\n"); // go 60 px up
-		if (yfrog - 60 >= 0)
+
+	case 5: // UP
+		if (yfrog - 60 >= 0) 
 		{ // edge protection, make sure frog doesnt go outside screen
 			if (level1)
 			{
-				frogspeed = 0;
+				frogspeed = 0; // updating frog and object locations
 				yfrog -= 60;
 				collisionDetect();
 				drawLevel(1);
@@ -1157,12 +1039,11 @@ void InterpretButtons(int i)
 				drawCanvas();
 				moves--;
 			}
-			else
+			else // level 2 background and objects
 			{
 				yfrog -= 60;
 				drawLevel(2);
 				collisionDetect();
-				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
 				drawCanvas();
 				moves--;
@@ -1181,8 +1062,7 @@ void InterpretButtons(int i)
 			moves--;
 		}
 		break;
-	case 6:
-		//printf("You have pressed Joy-pad DOWN\n"); // 60 px down
+	case 6: // DOWN
 		if (yfrog + 60 < 720 && level1)
 		{
 			frogspeed = 0;
@@ -1199,7 +1079,6 @@ void InterpretButtons(int i)
 			{
 				yfrog += 60;
 				drawLevel(2);
-				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				collisionDetect();
 				drawLevel2Ob();
 				drawCanvas();
@@ -1217,8 +1096,7 @@ void InterpretButtons(int i)
 			}
 		}
 		break;
-	case 7:
-		//printf("You have pressed Joy-pad LEFT\n"); // 60 px left
+	case 7: // LEFT
 		if (xfrog - 60 >= 0)
 		{
 			if (level1)
@@ -1235,7 +1113,6 @@ void InterpretButtons(int i)
 			{
 				xfrog -= 60;
 				drawLevel(2);
-				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
 				collisionDetect();
 				drawCanvas();
@@ -1243,8 +1120,7 @@ void InterpretButtons(int i)
 			}
 		}
 		break;
-	case 8:
-		//printf("You have pressed Joy-pad RIGHT\n");
+	case 8: // RIGHT
 		if (xfrog + 60 < 1220)
 		{
 			if (level1)
@@ -1260,7 +1136,6 @@ void InterpretButtons(int i)
 			{
 				xfrog += 60;
 				drawLevel(2);
-				//drawImage(frogPtr, 60, 60, xfrog, yfrog);
 				drawLevel2Ob();
 				collisionDetect();
 				drawCanvas();
@@ -1268,18 +1143,19 @@ void InterpretButtons(int i)
 			}
 		}
 		break;
-	case 9:
-		//printf("You have pressed A\n");
+	case 9: // A
 		break;
 	}
 }
 
+// quitGame() prints a black screen and exits the program.
 void quitGame()
 {
 	drawImage(blackscreenPtr, 1280, 720, 0, 0); // print a black screen
 	drawCanvas();
 	exit(0);
 }
+
 // Game_Read_SNES used to read SNES controller input while in the main game state
 void Game_Read_SNES()
 {
@@ -1288,17 +1164,9 @@ void Game_Read_SNES()
 	timeLeft = 120;
 	level1 = true;
 
-	// gpio = getGPIOPtr(); // get gpio pointer
-
-	// //int buttons[17]; // array for the buttons
-	// // initializing 3 GPIO lines
-	// Init_GPIO(CLK, 1);
-	// Init_GPIO(LAT, 1);
-	// Init_GPIO(DAT, 0);
-
 	int pressed = 0;
 
-	// initial coordinate locations for all the obstacles in leve1_2 and 3_4
+	// initialize coordinate locations for all the obstacles in leve1_2 and 3_4
 	initOb();
 
 	buttons[4] = 1; // initialize START as unpressed
@@ -1311,19 +1179,16 @@ void Game_Read_SNES()
 			clock_t start = clock(); // start time for the loop here
 			score = 2*(lives+moves+timeLeft); // constantly update score here
 
-			// reference: pseudocode from lecture notes "RPi 2 SNES" slide 20
 			if (level1)
 			{
 				drawLevel(1);
 				drawLevel1Ob();
-				//drawImage(statsPtr, 300, 60, 0, 0); // some flickering if i put it here
 				drawCanvas();
 			}
 			else
 			{
 				drawLevel(2);
 				drawLevel2Ob();
-				//drawImage(statsPtr, 300, 60, 0, 0);
 				drawCanvas();
 			}
 
@@ -1343,47 +1208,12 @@ void Game_Read_SNES()
 
 			// doing collision detection
 			collisionDetect();
-			// loop through 60 top 60 pixels of the frog (north border)
 			
-				// checking collissions for all cars in level 1
-			// Write_Clock(1);
-			// Write_Latch(1);
-			// Wait(12);
-			// Write_Latch(0);
-				// for (int i = 1; i <= 16; i++)
-				// { // loop through each button
-				// 	Wait(6);
-				// 	Write_Clock(0);
-				// 	Wait(6);
-				// 	int b = Read_Data();
-				// 	buttons[i] = b;
-
-				// 	if (b == 0)
-				// 	{
-				// 		if (i == 4)
-				// 		{
-				// 			//printf("AAAAAAAAAAA\n");
-				// 			//resumeMenu();
-				// 			buttons[4] = 1;
-				// 			Wait(5000);
-
-				// 		}
-				// 		// if the button is pressed
-				// 		InterpretButtons(i); // call interpretButtons to update the screen based on what button is pressed
-				// 		pressed = 1;
-				// 		break;
-				// 	}
-				// 	Write_Clock(1);
-				// }
 				Read_SNES();
 				for(int i=1;i<=12;i++){
 					if(buttons[i]==0){
-						//printf("aaa");
 						if (i == 4)
 						{
-							//printf("AAAAAAAAAAA\n");
-							//resumeMenu();
-							//buttons[4] = 1;
 							Wait(50000);
 
 						}
@@ -1393,35 +1223,33 @@ void Game_Read_SNES()
 						break;
 					}
 				}
-			Wait(50000);
+			Wait(50000); // small delay
 			
 			// updating the time
 			clock_t end = clock();
 			double loopTime = (double)(end - start);
-			timeElapsed += loopTime / CLOCKS_PER_SEC;
-			if (timeElapsed >= 1)
+			timeElapsed += loopTime / CLOCKS_PER_SEC; 
+			if (timeElapsed >= 1) // if 1 full second passes
 			{
-				timeLeft--;
+				timeLeft--; // decrement timeLeft (the one that is displayed on screen)
 				timeElapsed = 0;
-				timePassed++;
+				timePassed++; // increment timePassed (the one used to determine when value pack should be printed)
 			}
 		}
 	}
 }
 
-//
+// valuePack checks timePassed to determine if a vlaue pack should be printed onto the screen
 void valuePack()
 {
 	if (timePassed >= 30) { // if 30 seconds passes
 		// print a value pack somewhere on the screen. the value pack will add one life.
-		drawImage(valuepackPtr, 60, 60, xvaluepack, yvaluepack); //xvaluepack, yvaluepack);
-
+		drawImage(valuepackPtr, 60, 60, xvaluepack, yvaluepack);
 		drawCanvas();
 	}
-
 }
 
-//
+// resumeMenu handles the movement of the frog and the game state when the resume menu is open.
 void resumeMenu()
 {
 	drawImage(pausemenuPtr, 500, 500, 390, 110); // drawing the title
@@ -1441,13 +1269,13 @@ void resumeMenu()
 			{
 				if (buttons[i] == 0)
 				{
-					switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
+					switch (i) // switch cases covering if START, joypad UP, DOWN or A is pressed.
 					{
 					
 					// START
 					case 4:
 						Wait(100000);
-						return;
+						return; // return back to the game (aka resume)
 						break;
 
 					// UP
@@ -1468,7 +1296,6 @@ void resumeMenu()
 
 					// A
 					case 9:
-						//printf("You have pressed A\n");
 						break;
 					}
 					pressed = 1;
@@ -1501,8 +1328,8 @@ void resumeMenu()
 	}
 
 }
-// randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
-// returns a number between min and max, for random location of value pack.
+
+// randBetween function returns a int number between min and max, for random pixel location of value pack.
 int randBetween(int min, int max)
 {
 	srand(time(NULL));
@@ -1512,17 +1339,16 @@ int randBetween(int min, int max)
 /* main function */
 int main()
 {
+	moves = 90; // initializing stats for the game
+	lives = 4;	
+	timeLeft = 120; 
 
-	moves = 90;
-	lives = 1;		// initializing moves to 40 and lives to 4
-	timeLeft = 120; // given 120 seconds
-
-	int xv = randBetween(0, 1220); // coordinates for valuepack
+	int xv = randBetween(0, 1220); // initializing coordinates for valuepack
 	int yv = randBetween(0, 660);
 	xvaluepack = xv;
 	yvaluepack = yv;
 
-	Menu_Read_SNES(); // reading controller input
+	Menu_Read_SNES(); // reading controller input to execute the rest of the game.
 
 	return 0;
 }
