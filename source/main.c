@@ -85,7 +85,7 @@ typedef struct
 	short int color;
 	int x, y;
 } Pixel;
-
+// function summaries
 struct fbs framebufferstruct;
 void drawPixel(Pixel *pixel);
 void gameOver();
@@ -195,7 +195,8 @@ void Wait(int s)
 {
 	delayMicroseconds(s);
 }
-
+// Read_SNES() is a general function to read inputs (buttons pressed on the SNES controller). 
+// this function is referenced from project part 1 code
 void Read_SNES()
 {
 	gpio = getGPIOPtr();
@@ -377,7 +378,8 @@ void initOb()
 	pigs[3].x = 720;
 	pigs[2].y = pigs[3].y = 60;
 }
-
+//drawDigit() prints out the numerical digits frepresenting the number of lives, moves, time, and score
+// to be displayed on the stats bar in the top left corner.
 void drawDigit(int i,int x, int y){
 	switch (i){
 		case 0:
@@ -412,6 +414,7 @@ void drawDigit(int i,int x, int y){
                 break;
 	}
 }
+// drawMoves takes the int number of moves left and calls drawDigit to display it onto the stats bar.
 void drawMoves(int i){
 	if( i<10){
 		drawDigit(i,280,0);
@@ -422,6 +425,7 @@ void drawMoves(int i){
 		drawDigit(b,280,0);
 	}
 }
+// drawTime takes the int number of seconds left and calls drawDigit to display it onto the stats bar.
 void drawTime(int i){
 	if( i<10){
 		drawDigit(i,135,0);
@@ -441,6 +445,7 @@ void drawTime(int i){
 		drawDigit(c,95,0);
 	}
 }
+// drawScore takes the int number of moves left and calls drawDigit to display it onto the stats bar.
 void drawScore(int i){
 	if( i<10){
 		drawDigit(i,135,30);
@@ -460,6 +465,7 @@ void drawScore(int i){
 		drawDigit(c,95,30);
 	}
 }
+// drawScore takes the int number of moves left and calls drawDigit to display it onto winning or losing screen.
 void drawWScore(int i){
 	if( i<10){
 		drawDigit(i,720,340);
@@ -763,6 +769,7 @@ void drawLevel(int l)
 		drawImage(level3_4Ptr, 1280, 720, 0, 0);
 	}
 }
+// gameOver() handles the game logic in the event that the game ends (run out of lives, time or moves).
 void gameOver()
 {
 	timePassed = 0;
@@ -787,7 +794,7 @@ void gameOver()
 	Wait(100000);
 	Menu_Read_SNES();
 }
-
+// gameWon() handles logic when the player wins the game (reaches the end of teh 4 lvls).
 void gameWon()
 {
 	timePassed = 0;
@@ -887,7 +894,9 @@ bool rockCollisionr() // 1 2 5 8 9
 bool valuePackCollision() {
 	return  ((xfrog < xvaluepack + 60 && xfrog + 60 > xvaluepack) && (yfrog < yvaluepack + 60 && yfrog + 60 > yvaluepack));
 }
-
+// collisionDetect checks each of the above collision functions and executes movement of the frog along with the object (logs, lilypads, rocks, etc)
+// or resets frog location and decrements lives (cars, animals).
+// also handles when the frog collides with teh value pack.
 void collisionDetect()
 {
 	if (valuePackCollision()) {
@@ -1304,7 +1313,7 @@ void Game_Read_SNES()
 	}
 }
 
-//
+// valuePack checks timePassed to determine if a vlaue pack should be printed onto the screen
 void valuePack()
 {
 	if (timePassed >= 30) { // if 30 seconds passes
@@ -1316,7 +1325,7 @@ void valuePack()
 
 }
 
-//
+// resumeMenu handles the movement of the frog and the game state when the resume menu is open.
 void resumeMenu()
 {
 	drawImage(pausemenuPtr, 500, 500, 390, 110); // drawing the title
@@ -1399,9 +1408,9 @@ int randBetween(int min, int max)
 int main()
 {
 
-	moves = 90;
-	lives = 1;		// initializing moves to 40 and lives to 4
-	timeLeft = 120; // given 120 seconds
+	// moves = 90;
+	// lives = 1;		// initializing moves to 40 and lives to 4
+	// timeLeft = 120; // given 120 seconds
 
 	int xv = randBetween(0, 1220); // coordinates for valuepack
 	int yv = randBetween(0, 660);
