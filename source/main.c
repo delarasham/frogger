@@ -98,6 +98,7 @@ void drawDigit();
 void drawMoves();
 void valuePack();
 int randBetween();
+void drawWScore();
 // global variable for the frog's coordinates
 int xfrog, yfrog;
 
@@ -463,6 +464,25 @@ void drawScore(int i){
 		drawDigit(c,95,30);
 	}
 }
+void drawWScore(int i){
+	if( i<10){
+		drawDigit(i,720,340);
+	}else if(i<100){
+		int a = i/10;
+		int b = i%10;
+		drawDigit(a,660,340);
+		drawDigit(b,720,340);
+	}
+	else{
+		int a = i%10;
+		int temp = i/10;
+		int b = temp%10;
+		int c = temp/10;
+		drawDigit(a,720,340);
+		drawDigit(b,690,340);
+		drawDigit(c,660,340);
+	}
+}
 void drawLives(int i){
 	drawDigit(i,280,30);
 }
@@ -758,6 +778,7 @@ void gameOver()
 	score = 2*(lives+moves+timeLeft);
 
 	drawImage(losePtr, 500, 500, 390, 110);
+	drawWScore(score);
 	drawCanvas();
 	// gpio = getGPIOPtr(); // get gpio pointer
 
@@ -811,6 +832,7 @@ void gameWon()
 	score = 2*(lives+moves+timeLeft);
 
 	drawImage(winPtr, 500, 500, 390, 110);
+	drawWScore(score);
 	drawCanvas();
 	//int buttons[17]; // array for the buttons
 	// // initializing 3 GPIO lines
