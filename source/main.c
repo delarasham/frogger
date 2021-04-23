@@ -565,7 +565,7 @@ void drawLevel1Ob()
 	drawImage(statsPtr, 300, 60, 0, 0);
 	drawMoves(moves);
 	drawTime(timeLeft);
-	//drawScore(score);
+	drawScore(score);
 	drawLives(lives);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
@@ -579,86 +579,86 @@ void drawLevel2Ob()
 {
 	// same procedure as in previous function
 	drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
-	rock[1].x += 5;
+	rock[1].x += 4;
 	if (rock[1].x + 120 > 1280)
 	{
 		rock[1].x = 0;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[2].x, rock[2].y);
-	rock[2].x += 5;
+	rock[2].x += 4;
 	if (rock[2].x + 120 > 1280)
 	{
 		rock[2].x = 0;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[3].x, rock[3].y);
-	rock[3].x -= 5;
+	rock[3].x -= 6;
 	if (rock[3].x < 0)
 	{
 		rock[3].x = 1100;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[4].x, rock[4].y);
-	rock[4].x -= 5;
+	rock[4].x -= 6;
 	if (rock[4].x < 0)
 	{
 		rock[4].x = 1100;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[5].x, rock[5].y);
-	rock[5].x += 5;
+	rock[5].x += 4;
 	if (rock[5].x + 120 > 1280)
 	{
 		rock[5].x = 0;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[6].x, rock[6].y);
-	rock[6].x -= 5;
+	rock[6].x -= 6;
 	if (rock[6].x < 0)
 	{
 		rock[6].x = 1160;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[7].x, rock[7].y);
-	rock[7].x -= 5;
+	rock[7].x -= 6;
 	if (rock[7].x < 0)
 	{
 		rock[7].x = 1160;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[8].x, rock[8].y);
-	rock[8].x += 5;
+	rock[8].x += 4;
 	if (rock[8].x + 180 > 1280)
 	{
 		rock[8].x = 0;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[9].x, rock[9].y);
-	rock[9].x += 5;
+	rock[9].x += 4;
 	if (rock[9].x + 180 > 1280)
 	{
 		rock[9].x = 0;
 	}
 
 	drawImage(cowPtr, 100, 60, cows[1].x, cows[1].y);
-	cows[1].x += 5;
+	cows[1].x += 6;
 	if (cows[1].x + 100 > 1280)
 	{
 		cows[1].x = 0;
 	}
 	drawImage(cowPtr, 100, 60, cows[2].x, cows[2].y);
-	cows[2].x += 5;
+	cows[2].x += 4;
 	if (cows[2].x + 100 > 1280)
 	{
 		cows[2].x = 0;
 	}
 	drawImage(cowPtr, 100, 60, cows[3].x, cows[3].y);
-	cows[3].x += 5;
+	cows[3].x += 7;
 	if (cows[3].x + 100 > 1280)
 	{
 		cows[3].x = 0;
 	}
 	drawImage(pigPtr, 60, 60, pigs[1].x, pigs[1].y);
-	pigs[1].x -= 5;
+	pigs[1].x -= 3;
 	if (pigs[1].x < 0)
 	{
 		pigs[1].x = 1220;
 	}
 	drawImage(pigPtr, 60, 60, pigs[2].x, pigs[2].y);
-	pigs[2].x -= 5;
+	pigs[2].x -= 2;
 	if (pigs[2].x < 0)
 	{
 		pigs[2].x = 1220;
@@ -672,7 +672,7 @@ void drawLevel2Ob()
 	drawImage(statsPtr, 300, 60, 0, 0);
 	drawMoves(moves);
 	drawTime(timeLeft);
-	//drawScore(score);
+	drawScore(score);
 	drawLives(lives);
 	if (xfrog + frogspeed < 1280 - 60 && xfrog + frogspeed > 60)
 		xfrog += frogspeed;
@@ -949,14 +949,14 @@ void collisionDetect()
 		frogspeed = 0;
 		if (rockCollisionl())
 		{
-			frogspeed = -5;
+			frogspeed = -6;
 			drawLevel(2);
 			drawLevel2Ob();
 			drawCanvas();
 		}
 		else if (rockCollisionr())
 		{
-			frogspeed = 5;
+			frogspeed = 4;
 			drawLevel(2);
 			drawLevel2Ob();
 			drawCanvas();
@@ -970,7 +970,7 @@ void collisionDetect()
 			drawLevel2Ob();
 			drawCanvas();
 		}
-		else if (yfrog < 660 && yfrog >= 420)
+		else if (yfrog < 660 && yfrog >= 360)
 		{
 			// frog BURNS IN HOT LAVA >>>:( reset to starting place
 			lives--;
@@ -1286,17 +1286,6 @@ void Game_Read_SNES()
 				drawCanvas();
 			}
 
-			// updating the time
-			clock_t end = clock();
-			double loopTime = (double)(end - start);
-			timeElapsed += loopTime / CLOCKS_PER_SEC;
-			if (timeElapsed >= 1)
-			{
-				timeLeft--;
-				timeElapsed = 0;
-				timePassed++;
-			}
-
 			// checking if game over
 			if (lives == 0 || moves == 0 || timeLeft == 0)
 			{
@@ -1333,6 +1322,7 @@ void Game_Read_SNES()
 							printf("AAAAAAAAAAA\n");
 							//resumeMenu();
 							buttons[4] = 1;
+
 						}
 						// if the button is pressed
 						InterpretButtons(i); // call interpretButtons to update the screen based on what button is pressed
@@ -1343,6 +1333,17 @@ void Game_Read_SNES()
 				}
 			}
 			Wait(50000);
+			
+			// updating the time
+			clock_t end = clock();
+			double loopTime = (double)(end - start);
+			timeElapsed += loopTime / CLOCKS_PER_SEC;
+			if (timeElapsed >= 1)
+			{
+				timeLeft--;
+				timeElapsed = 0;
+				timePassed++;
+			}
 		}
 	}
 }
@@ -1353,6 +1354,7 @@ void valuePack()
 	if (timePassed >= 30) { // if 30 seconds passes
 		// print a value pack somewhere on the screen. the value pack will add one life.
 		drawImage(valuepackPtr, 60, 60, xvaluepack, yvaluepack); //xvaluepack, yvaluepack);
+
 		drawCanvas();
 	}
 
@@ -1379,6 +1381,10 @@ void resumeMenu()
 				{
 					switch (i) // swicth cases covering is joypad UP, DOWN or A is pressed.
 					{
+					
+					// START
+					case 4:
+						break;
 
 					// UP
 					case 5:
@@ -1408,10 +1414,25 @@ void resumeMenu()
 		}
 		Wait(100000);
 	}
-	if (cursor == 1)
+
+	if (cursor == 1) // if select QUIT GAME, return back to main menu screen
 	{
-		quitGame();
+		Wait(100000);
+		Menu_Read_SNES();
 	}
+
+	else if (cursor == 0) // restart game is selected, restart the game
+	{
+		lives = 4;
+		moves = 90;
+		timeLeft = 120;
+		drawImage(level1_2Ptr, 1280, 720, 0, 0); // drawing the level background
+		drawImage(frogPtr, 60, 60, 610, 660);	 // drawing frog icon in center of the level
+		xfrog = 610;
+		yfrog = 660;
+		drawCanvas();
+	}
+
 }
 // randBetween function original source code from http://www.fundza.com/c4serious/randbetween/index.html
 // returns a number between min and max, for random location of value pack.
@@ -1433,20 +1454,6 @@ int main()
 	int yv = randBetween(0, 660);
 	xvaluepack = xv;
 	yvaluepack = yv;
-	// put this somewhere in the thread, right before you display the time:
-	/*
-	timeLeft -= (int) start/CLOCKS_PER_SEC;
-	if (timeLeft = 30) {
-		// print a value pack somewhere on the screen. the value pack will add one life.
-		xvaluepack = randBetween(0, 1220);
-		yvaluepack = randBetween(0, 660);
-		drawImage(valuepackPtr, 60, 60, xvaluepack, yvaluepack);
-		//...
-		if(frog location == value pack location) {
-			lives++;
-		}
-	}
-	*/
 
 	Menu_Read_SNES(); // reading controller input
 
