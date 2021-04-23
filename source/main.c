@@ -336,24 +336,24 @@ void initOb()
 	car[14].x=550;
 
 	lilypads[1].x = 0;
-	lilypads[2].x = 200;
-	lilypads[3].x = 400;
+	lilypads[2].x = 430;
+	lilypads[3].x = 930;
 	lilypads[1].y = lilypads[2].y = lilypads[3].y = 240;
 	logs[1].x = 0;
-	logs[2].x = 350;
-	logs[3].x = 650;
+	logs[2].x = 550;
+	logs[3].x = 1100;
 	logs[1].y = logs[2].y = logs[3].y = 180;
 	lilypads[4].x = 1200;
 	lilypads[5].x = 600;
 	lilypads[6].x = 200;
 	lilypads[4].y = lilypads[5].y = lilypads[6].y = 120;
-	turtle[1].x = 980;
+	turtle[1].x = 1050;
 	turtle[1].y = 60;
 	turtle[2].x = 500;
 	turtle[2].y = 60;
 
 	rock[1].x = 0;
-	rock[2].x = 200;
+	rock[2].x = 900;
 	rock[1].y = rock[2].y = 600;
 	rock[3].x = 1100;
 	rock[4].x = 700;
@@ -364,11 +364,11 @@ void initOb()
 	rock[7].x = 600;
 	rock[6].y = rock[7].y = 420;
 	rock[8].x = 0;
-	rock[9].x = 200;
+	rock[9].x = 800;
 	rock[8].y = rock[9].y = 360;
 
 	cows[1].x = 0;
-	cows[2].x = 200;
+	cows[2].x = 700;
 	cows[1].y = cows[2].y = 240;
 	cows[3].x = 100;
 	cows[3].y = 120;
@@ -655,95 +655,95 @@ void drawLevel2Ob()
 {
 	// same procedure as in previous function
 	drawImage(rock1Ptr, 120, 60, rock[1].x, rock[1].y);
-	rock[1].x += 4;
-	if (rock[1].x + 120 > 1280)
+	rock[1].x += 7;
+	if (rock[1].x  > 1280)
 	{
-		rock[1].x = 0;
+		rock[1].x = -120;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[2].x, rock[2].y);
-	rock[2].x += 4;
-	if (rock[2].x + 120 > 1280)
+	rock[2].x += 7;
+	if (rock[2].x > 1280)
 	{
-		rock[2].x = 0;
+		rock[2].x = -120;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[3].x, rock[3].y);
-	rock[3].x -= 6;
-	if (rock[3].x < 0)
+	rock[3].x -= 8;
+	if (rock[3].x < -180)
 	{
-		rock[3].x = 1100;
+		rock[3].x = 1280;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[4].x, rock[4].y);
-	rock[4].x -= 6;
-	if (rock[4].x < 0)
+	rock[4].x -= 8;
+	if (rock[4].x < -180)
 	{
-		rock[4].x = 1100;
+		rock[4].x = 1280;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[5].x, rock[5].y);
-	rock[5].x += 4;
-	if (rock[5].x + 120 > 1280)
+	rock[5].x += 7;
+	if (rock[5].x  > 1280)
 	{
-		rock[5].x = 0;
+		rock[5].x = -120;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[6].x, rock[6].y);
-	rock[6].x -= 6;
-	if (rock[6].x < 0)
+	rock[6].x -= 8;
+	if (rock[6].x < -120)
 	{
-		rock[6].x = 1160;
+		rock[6].x = 1280;
 	}
 	drawImage(rock1Ptr, 120, 60, rock[7].x, rock[7].y);
-	rock[7].x -= 6;
-	if (rock[7].x < 0)
+	rock[7].x -= 8;
+	if (rock[7].x < -120)
 	{
-		rock[7].x = 1160;
+		rock[7].x = 1280;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[8].x, rock[8].y);
-	rock[8].x += 4;
-	if (rock[8].x + 180 > 1280)
+	rock[8].x += 7;
+	if (rock[8].x  > 1280)
 	{
-		rock[8].x = 0;
+		rock[8].x = -180;
 	}
 	drawImage(rock2Ptr, 180, 60, rock[9].x, rock[9].y);
-	rock[9].x += 4;
-	if (rock[9].x + 180 > 1280)
+	rock[9].x += 7;
+	if (rock[9].x > 1280)
 	{
-		rock[9].x = 0;
+		rock[9].x = -180;
 	}
 
 	drawImage(cowPtr, 100, 60, cows[1].x, cows[1].y);
 	cows[1].x += 6;
-	if (cows[1].x + 100 > 1280)
+	if (cows[1].x  > 1280)
 	{
-		cows[1].x = 0;
+		cows[1].x = -100;
 	}
 	drawImage(cowPtr, 100, 60, cows[2].x, cows[2].y);
-	cows[2].x += 4;
-	if (cows[2].x + 100 > 1280)
+	cows[2].x += 6;
+	if (cows[2].x  > 1280)
 	{
-		cows[2].x = 0;
+		cows[2].x = -100;
 	}
 	drawImage(cowPtr, 100, 60, cows[3].x, cows[3].y);
 	cows[3].x += 7;
-	if (cows[3].x + 100 > 1280)
+	if (cows[3].x  > 1280)
 	{
-		cows[3].x = 0;
+		cows[3].x = -100;
 	}
 	drawImage(pigPtr, 60, 60, pigs[1].x, pigs[1].y);
 	pigs[1].x -= 3;
-	if (pigs[1].x < 0)
+	if (pigs[1].x < -60)
 	{
-		pigs[1].x = 1220;
+		pigs[1].x = 1280;
 	}
 	drawImage(pigPtr, 60, 60, pigs[2].x, pigs[2].y);
-	pigs[2].x -= 2;
-	if (pigs[2].x < 0)
+	pigs[2].x -= 5;
+	if (pigs[2].x < -60)
 	{
-		pigs[2].x = 1220;
+		pigs[2].x = 1280;
 	}
 	drawImage(pigPtr, 60, 60, pigs[3].x, pigs[3].y);
 	pigs[3].x -= 5;
-	if (pigs[3].x < 0)
+	if (pigs[3].x < -60)
 	{
-		pigs[3].x = 1220;
+		pigs[3].x = 1280;
 	}
 	drawImage(statsPtr, 300, 60, 0, 0);
 	drawMoves(moves);
@@ -985,14 +985,14 @@ void collisionDetect()
 		frogspeed = 0;
 		if (rockCollisionl())
 		{
-			frogspeed = -6;
+			frogspeed = -7;
 			drawLevel(2);
 			drawLevel2Ob();
 			drawCanvas();
 		}
 		else if (rockCollisionr())
 		{
-			frogspeed = 4;
+			frogspeed = 7;
 			drawLevel(2);
 			drawLevel2Ob();
 			drawCanvas();
